@@ -1,10 +1,5 @@
-import { generateGcode } from "../../core/generate-gcode.ts"
-import {
-  useGcodeSettings,
-  usePolylines,
-  useProcessingStatus,
-  useUploadedImage,
-} from "../../store/selectors"
+import { generateGcode } from "../../core/gcode/generate-gcode"
+import { useGcodeSettings, usePolylines, useProcessingStatus, useUploadedImage } from "../../store/selectors"
 
 export const ExportGcodeButton = () => {
   const polylines = usePolylines()
@@ -28,11 +23,7 @@ export const ExportGcodeButton = () => {
   }
 
   return (
-    <button
-      onClick={handleExport}
-      disabled={isDisabled}
-      className="rounded-lg bg-accent px-6 py-3 font-mono text-sm font-bold uppercase text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-    >
+    <button onClick={handleExport} disabled={isDisabled} className="rounded-lg bg-accent px-6 py-3 font-mono text-sm font-bold uppercase text-background transition-opacity hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50">
       Download GCODE
     </button>
   )

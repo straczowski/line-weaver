@@ -1,7 +1,7 @@
 import assert from "node:assert"
 import { describe, it } from "node:test"
-import { vectorizeImage } from "./vectorize-image"
-import type { ProcessingConfig } from "./types"
+import { vectorizeImage } from "./vectorize-image.ts"
+import type { ProcessingConfig } from "./types.ts"
 
 const createImageData = (width: number, height: number, rgba: number[]): ImageData => ({
   width,
@@ -90,7 +90,9 @@ describe("vectorizeImage", () => {
       settings: createSettings({ threshold: 192 }),
     })
 
-    assert.ok(lowThreshold.polylines.length >= highThreshold.polylines.length)
+    // Higher threshold means lower darknessThreshold (1 - threshold/255),
+    // so more cells qualify as "dark enough" to generate hatching lines
+    assert.ok(highThreshold.polylines.length >= lowThreshold.polylines.length)
   })
 
   it("should include grid metadata in output", () => {
@@ -147,4 +149,3 @@ describe("vectorizeImage", () => {
     assert.ok(result.grid.values[0][0] < 100)
   })
 })
-

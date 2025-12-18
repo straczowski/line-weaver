@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react"
-import { extractImageData } from "../../core/extract-image-data"
-import { loadImage } from "../../core/load-image"
+import { extractImageData } from "../../core/image/extract-image-data"
+import { loadImage } from "../../core/image/load-image"
 import type { UploadedImage } from "../../core/types"
-import { validateImageFile } from "../../core/validate-image-file"
+import { validateImageFile } from "../../core/image/validate-image-file"
 import { useImageActions } from "../../store/actions"
 
 export const ImageUploader = () => {
@@ -98,34 +98,9 @@ export const ImageUploader = () => {
 
   return (
     <div className="flex flex-col gap-2">
-      <div
-        onDragEnter={handleDragEnter}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
-        className={`rounded-lg border-2 border-dashed transition-colors ${
-          isLoading
-            ? "pointer-events-none border-text-muted bg-surface opacity-70"
-            : isDragging
-              ? "border-accent bg-accent/10"
-              : "border-text-muted bg-surface hover:border-accent/50"
-        }`}
-      >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/png,image/jpeg"
-          onChange={handleFileSelect}
-          disabled={isLoading}
-          className="hidden"
-        />
-        {isLoading ? (
-          <LoadingIndicator />
-        ) : uploadedImage ? (
-          <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} />
-        ) : (
-          <DropZone isDragging={isDragging} onClick={handleClick} />
-        )}
+      <div onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`rounded-lg border-2 border-dashed transition-colors ${isLoading ? "pointer-events-none border-text-muted bg-surface opacity-70" : isDragging ? "border-accent bg-accent/10" : "border-text-muted bg-surface hover:border-accent/50"}`}>
+        <input ref={fileInputRef} type="file" accept="image/png,image/jpeg" onChange={handleFileSelect} disabled={isLoading} className="hidden" />
+        {isLoading ? <LoadingIndicator /> : uploadedImage ? <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} /> : <DropZone isDragging={isDragging} onClick={handleClick} />}
       </div>
       {error && <p className="text-sm text-warning">{error}</p>}
     </div>
@@ -144,37 +119,22 @@ const LoadingIndicator = () => {
 const DropZone = ({ isDragging, onClick }: { isDragging: boolean; onClick: () => void }) => {
   return (
     <div onClick={onClick} className="flex h-64 cursor-pointer items-center justify-center">
-      <p className="text-text-muted">
-        {isDragging ? "Drop to upload" : "Drop image here or click to upload"}
-      </p>
+      <p className="text-text-muted">{isDragging ? "Drop to upload" : "Drop image here or click to upload"}</p>
     </div>
   )
 }
 
-const ImagePreview = ({
-  image,
-  onChangeImage,
-}: {
-  image: UploadedImage
-  onChangeImage: (event: React.MouseEvent) => void
-}) => {
+const ImagePreview = ({ image, onChangeImage }: { image: UploadedImage; onChangeImage: (event: React.MouseEvent) => void }) => {
   return (
     <div className="flex items-center gap-4 p-4">
-      <img
-        src={image.dataUrl}
-        alt="Uploaded preview"
-        className="h-24 w-24 rounded-lg object-cover"
-      />
+      <img src={image.dataUrl} alt="Uploaded preview" className="h-24 w-24 rounded-lg object-cover" />
       <div className="flex flex-1 flex-col gap-1">
         <p className="truncate font-mono text-sm text-text">{image.file.name}</p>
         <p className="text-sm text-text-muted">
           {image.width} × {image.height} • {formatFileSize(image.file.size)}
         </p>
       </div>
-      <button
-        onClick={onChangeImage}
-        className="rounded-lg border border-accent bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase text-accent transition-colors hover:bg-accent/10"
-      >
+      <button onClick={onChangeImage} className="rounded-lg border border-accent bg-transparent px-4 py-2 font-mono text-xs font-bold uppercase text-accent transition-colors hover:bg-accent/10">
         Change Image
       </button>
     </div>

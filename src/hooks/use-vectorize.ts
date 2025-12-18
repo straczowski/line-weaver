@@ -1,10 +1,10 @@
 import { useCallback } from "react"
-import { createStrokeConfig } from "../core/create-stroke-config.ts"
-import { generateSvg } from "../core/generate-svg.ts"
-import { vectorizeImage } from "../core/vectorize-image.ts"
-import { useAppStore } from "../store/app-store.ts"
-import { useOutputActions, useProcessingActions } from "../store/actions.ts"
-import { useImageData, useProcessingStatus, useUploadedImage } from "../store/selectors.ts"
+import { createStrokeConfig } from "../core/svg/create-stroke-config"
+import { generateSvg } from "../core/svg/generate-svg"
+import { vectorizeImage } from "../core/vectorize-image"
+import { useAppStore } from "../store/app-store"
+import { useOutputActions, useProcessingActions } from "../store/actions"
+import { useImageData, useProcessingStatus, useUploadedImage } from "../store/selectors"
 
 export const useVectorize = () => {
   const imageData = useImageData()
