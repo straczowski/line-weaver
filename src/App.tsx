@@ -43,11 +43,11 @@ const Header = () => {
       <div className="mx-auto flex max-w-7xl items-center justify-between">
         <h1 className="font-mono text-xl font-bold tracking-wider text-accent">LINE WEAVER</h1>
         <nav className="flex gap-4">
-          <a href="#" className="text-text-muted transition-colors hover:text-text">
+          <a href="https://github.com/straczowski/line-weaver" className="text-text-muted transition-colors hover:text-text">
             GitHub
           </a>
           <a href="#" className="text-text-muted transition-colors hover:text-text">
-            Help
+            Tutorial
           </a>
         </nav>
       </div>

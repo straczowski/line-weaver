@@ -12,8 +12,7 @@ import type { GrayscaleData, Polyline, ProcessingConfig, VectorizeImageInput, Ve
 
 export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput => {
   const { imageData, settings } = input
-
-  const grayscaleData = convertToGrayscale(imageData)
+  const grayscaleData = convertToGrayscale(imageData as ImageData)
 
   const blurredData = applyBlurIfNeeded(grayscaleData, settings.blurRadius)
 
@@ -22,9 +21,7 @@ export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput
     cellSize: settings.gridSize,
   })
 
-  const contourPolylines = settings.enableContours
-    ? processContours(blurredData, settings)
-    : []
+  const contourPolylines = settings.enableContours ? processContours(blurredData, settings) : []
 
   const hatchingPolylines = settings.enableHatching
     ? generateAdvancedHatching({
@@ -67,9 +64,7 @@ const processContours = (grayscaleData: GrayscaleData, settings: ProcessingConfi
 
   const epsilon = mapSimplifyLevelToEpsilon(settings.contourSimplify)
 
-  const simplified = polylines.map((polyline) =>
-    simplifyPolyline({ polyline, epsilon })
-  )
+  const simplified = polylines.map((polyline) => simplifyPolyline({ polyline, epsilon }))
 
   return simplified
 }
