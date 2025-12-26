@@ -10,20 +10,6 @@ import { useVectorize } from "./hooks/use-vectorize"
 import { useImageData } from "./store/selectors"
 
 export const App = () => {
-  return (
-    <div className="min-h-screen bg-background font-sans text-text">
-      <Header />
-      <main className="mx-auto max-w-7xl px-4 py-8">
-        <AutoVectorizer />
-        <CanvasSection />
-        <ControlSection />
-        <ActionSection />
-      </main>
-    </div>
-  )
-}
-
-const AutoVectorizer = () => {
   const imageData = useImageData()
   const debouncedSettings = useDebouncedSettings(250)
   const { vectorize } = useVectorize()
@@ -34,7 +20,17 @@ const AutoVectorizer = () => {
     }
   }, [imageData, debouncedSettings, vectorize])
 
-  return null
+  return (
+    <div className="min-h-screen bg-background font-sans text-text">
+      <Header />
+      <main className="mx-auto max-w-7xl px-4 py-8">
+        <UploadSection />
+        <CanvasSection />
+        <ControlSection />
+        <ActionSection />
+      </main>
+    </div>
+  )
 }
 
 const Header = () => {
@@ -55,10 +51,17 @@ const Header = () => {
   )
 }
 
-const CanvasSection = () => {
+const UploadSection = () => {
   return (
     <section className="mb-8">
       <ImageUploader />
+    </section>
+  )
+}
+
+const CanvasSection = () => {
+  return (
+    <section className="mb-8">
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <PreviewCanvas title="Original" />
         <PreviewCanvas title="Vectorized" />
