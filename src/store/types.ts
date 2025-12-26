@@ -15,7 +15,6 @@ export type AppState = {
   settings: ProcessingConfig
   gcodeSettings: GcodeSettings
   processingStatus: ProcessingStatus
-  processingProgress: number
   processingError: string | null
   svgOutput: string | null
   polylines: Polyline[] | null
@@ -30,7 +29,6 @@ export type AppActions = {
   updateGcodeSheet: (partial: Partial<GcodeSheetSettings>) => void
   resetGcodeSettings: () => void
   setProcessingStatus: (status: ProcessingStatus) => void
-  setProcessingProgress: (progress: number) => void
   setProcessingError: (error: string | null) => void
   setSvgOutput: (svg: string | null) => void
   setPolylines: (polylines: Polyline[] | null) => void

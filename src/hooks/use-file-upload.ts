@@ -3,14 +3,14 @@ import { extractImageData } from "../core/image/extract-image-data"
 import { loadImage } from "../core/image/load-image"
 import { validateImageFile } from "../core/image/validate-image-file"
 import { useImageActions } from "../store/actions"
-import { useStore } from "../store/store"
+import { useUploadedImage } from "../store/selectors"
 
 export const useFileUpload = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  const uploadedImage = useStore.use.uploadedImage()
+  const uploadedImage = useUploadedImage()
   const { setUploadedImage, setImageData } = useImageActions()
 
   useEffect(() => {

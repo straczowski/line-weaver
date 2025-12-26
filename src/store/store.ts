@@ -13,7 +13,6 @@ function createStore() {
     settings: DEFAULT_SETTINGS,
     gcodeSettings: DEFAULT_GCODE_SETTINGS,
     processingStatus: "idle" as ProcessingStatus,
-    processingProgress: 0,
     processingError: null,
     svgOutput: null,
     polylines: null,
@@ -68,9 +67,6 @@ function createStore() {
 
         setProcessingStatus: (status) =>
           set({ processingStatus: status }, undefined, "setProcessingStatus"),
-
-        setProcessingProgress: (progress) =>
-          set({ processingProgress: progress }, undefined, "setProcessingProgress"),
 
         setProcessingError: (error) =>
           set({ processingError: error }, undefined, "setProcessingError"),

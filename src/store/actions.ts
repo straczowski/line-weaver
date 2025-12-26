@@ -30,7 +30,6 @@ export const useProcessingActions = () =>
   useStore(
     useShallow((state) => ({
       setProcessingStatus: state.setProcessingStatus,
-      setProcessingProgress: state.setProcessingProgress,
       setProcessingError: state.setProcessingError,
     }))
   )
