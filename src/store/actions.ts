@@ -1,8 +1,8 @@
 import { useShallow } from "zustand/react/shallow"
-import { useAppStore } from "./app-store"
+import { useStore } from "./store"
 
 export const useImageActions = () =>
-  useAppStore(
+  useStore(
     useShallow((state) => ({
       setUploadedImage: state.setUploadedImage,
       setImageData: state.setImageData,
@@ -10,7 +10,7 @@ export const useImageActions = () =>
   )
 
 export const useSettingsActions = () =>
-  useAppStore(
+  useStore(
     useShallow((state) => ({
       updateSettings: state.updateSettings,
       resetSettings: state.resetSettings,
@@ -18,7 +18,7 @@ export const useSettingsActions = () =>
   )
 
 export const useGcodeSettingsActions = () =>
-  useAppStore(
+  useStore(
     useShallow((state) => ({
       updateGcodeCommands: state.updateGcodeCommands,
       updateGcodeSheet: state.updateGcodeSheet,
@@ -27,7 +27,7 @@ export const useGcodeSettingsActions = () =>
   )
 
 export const useProcessingActions = () =>
-  useAppStore(
+  useStore(
     useShallow((state) => ({
       setProcessingStatus: state.setProcessingStatus,
       setProcessingProgress: state.setProcessingProgress,
@@ -36,11 +36,11 @@ export const useProcessingActions = () =>
   )
 
 export const useOutputActions = () =>
-  useAppStore(
+  useStore(
     useShallow((state) => ({
       setSvgOutput: state.setSvgOutput,
       setPolylines: state.setPolylines,
     }))
   )
 
-export const useResetAction = () => useAppStore(useShallow((state) => ({ reset: state.reset })))
+export const useResetAction = () => useStore(useShallow((state) => ({ reset: state.reset })))

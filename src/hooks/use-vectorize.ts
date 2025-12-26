@@ -2,7 +2,7 @@ import { useCallback } from "react"
 import { createStrokeConfig } from "../core/svg/create-stroke-config"
 import { generateSvg } from "../core/svg/generate-svg"
 import { vectorizeImage } from "../core/vectorize-image"
-import { useAppStore } from "../store/app-store"
+import { useStore } from "../store/store"
 import { useOutputActions, useProcessingActions } from "../store/actions"
 import { useImageData, useProcessingStatus, useUploadedImage } from "../store/selectors"
 
@@ -16,7 +16,7 @@ export const useVectorize = () => {
   const vectorize = useCallback(() => {
     if (!imageData || !uploadedImage) return
 
-    const settings = useAppStore.getState().settings
+    const settings = useStore.getState().settings
 
     setProcessingStatus("processing")
     setProcessingError(null)

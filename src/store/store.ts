@@ -4,9 +4,9 @@ import { createSelectors } from "./create-selectors"
 import { DEFAULT_GCODE_SETTINGS, DEFAULT_SETTINGS } from "./default-settings"
 import type { AppStore, ProcessingStatus } from "./types"
 
-export const useAppStore = createSelectors(createAppStore())
+export const useStore = createSelectors(createStore())
 
-function createAppStore() {
+function createStore() {
   const initialState = {
     uploadedImage: null,
     imageData: null,
