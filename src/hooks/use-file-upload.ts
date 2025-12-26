@@ -2,15 +2,16 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { extractImageData } from "../core/image/extract-image-data"
 import { loadImage } from "../core/image/load-image"
 import { validateImageFile } from "../core/image/validate-image-file"
-import type { UploadedImage } from "../core/types"
 import { useImageActions } from "../store/actions"
+import { useAppStore } from "../store/app-store"
 
 export const useFileUpload = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
-  const { setUploadedImage: setStoreImage, setImageData } = useImageActions()
+  
+  const uploadedImage = useAppStore.use.uploadedImage()
+  const { setUploadedImage, setImageData } = useImageActions()
 
   useEffect(() => {
     if (!error) return
@@ -31,7 +32,7 @@ export const useFileUpload = () => {
       try {
         const image = await loadImage(file)
         setUploadedImage(image)
-        setStoreImage(image)
+        setIsLoading(false)
         const imageData = await extractImageData(image)
         setImageData(imageData)
       } catch (err) {
@@ -40,7 +41,7 @@ export const useFileUpload = () => {
         setIsLoading(false)
       }
     },
-    [setStoreImage, setImageData]
+    [setUploadedImage, setImageData]
   )
 
   const openFilePicker = useCallback(() => {
