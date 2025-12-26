@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from "react"
 import { extractImageData } from "../core/image/extract-image-data"
 import { loadImage } from "../core/image/load-image"
 import { validateImageFile } from "../core/image/validate-image-file"
-import { useImageActions } from "../store/actions"
+import { useImageActions } from "../store/actions-hooks"
 import { useUploadedImage } from "../store/selectors"
 
 export const useFileUpload = () => {

@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { useGcodeSettingsActions } from "../../store/actions"
+import { useGcodeSettingsActions } from "../../store/actions-hooks"
 import { useGcodeSettings } from "../../store/selectors"
 
 export const GcodeSettingsPanel = () => {

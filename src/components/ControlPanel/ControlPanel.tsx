@@ -1,4 +1,4 @@
-import { useSettingsActions } from "../../store/actions"
+import { useSettingsActions } from "../../store/actions-hooks"
 import { useSettings } from "../../store/selectors"
 
 export const ControlPanel = () => {

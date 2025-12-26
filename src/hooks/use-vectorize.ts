@@ -3,7 +3,7 @@ import { createStrokeConfig } from "../core/svg/create-stroke-config"
 import { generateSvg } from "../core/svg/generate-svg"
 import { vectorizeImage } from "../core/vectorize-image"
 import { useStore } from "../store/store"
-import { useOutputActions, useProcessingActions } from "../store/actions"
+import { useOutputActions, useProcessingActions } from "../store/actions-hooks"
 import { useImageData, useProcessingStatus, useUploadedImage } from "../store/selectors"
 
 export const useVectorize = () => {
