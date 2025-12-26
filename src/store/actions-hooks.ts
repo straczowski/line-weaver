@@ -13,7 +13,6 @@ export const useSettingsActions = () =>
   useStore(
     useShallow((state) => ({
       updateSettings: state.updateSettings,
-      resetSettings: state.resetSettings,
     }))
   )
 
@@ -22,7 +21,6 @@ export const useGcodeSettingsActions = () =>
     useShallow((state) => ({
       updateGcodeCommands: state.updateGcodeCommands,
       updateGcodeSheet: state.updateGcodeSheet,
-      resetGcodeSettings: state.resetGcodeSettings,
     }))
   )
 
@@ -41,5 +39,3 @@ export const useOutputActions = () =>
       setPolylines: state.setPolylines,
     }))
   )
-
-export const useResetAction = () => useStore(useShallow((state) => ({ reset: state.reset })))

@@ -36,8 +36,6 @@ function createStore() {
             "updateSettings"
           ),
 
-        resetSettings: () => set({ settings: DEFAULT_SETTINGS }, undefined, "resetSettings"),
-
         updateGcodeCommands: (partial) =>
           set(
             (state) => ({
@@ -62,9 +60,6 @@ function createStore() {
             "updateGcodeSheet"
           ),
 
-        resetGcodeSettings: () =>
-          set({ gcodeSettings: DEFAULT_GCODE_SETTINGS }, undefined, "resetGcodeSettings"),
-
         setProcessingStatus: (status) =>
           set({ processingStatus: status }, undefined, "setProcessingStatus"),
 
@@ -74,8 +69,6 @@ function createStore() {
         setSvgOutput: (svg) => set({ svgOutput: svg }, undefined, "setSvgOutput"),
 
         setPolylines: (polylines) => set({ polylines }, undefined, "setPolylines"),
-
-        reset: () => set(initialState, undefined, "reset"),
       }),
       { name: "LineWeaverStore" }
     )

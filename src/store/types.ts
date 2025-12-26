@@ -24,15 +24,12 @@ export type AppActions = {
   setUploadedImage: (image: UploadedImage | null) => void
   setImageData: (data: ImageData | null) => void
   updateSettings: (partial: Partial<ProcessingConfig>) => void
-  resetSettings: () => void
   updateGcodeCommands: (partial: Partial<GcodeCommandSettings>) => void
   updateGcodeSheet: (partial: Partial<GcodeSheetSettings>) => void
-  resetGcodeSettings: () => void
   setProcessingStatus: (status: ProcessingStatus) => void
   setProcessingError: (error: string | null) => void
   setSvgOutput: (svg: string | null) => void
   setPolylines: (polylines: Polyline[] | null) => void
-  reset: () => void
 }
 
 export type AppStore = AppState & AppActions
