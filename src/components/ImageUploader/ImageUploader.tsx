@@ -1,3 +1,4 @@
+import clsx from "clsx"
 import type { UploadedImage } from "../../core/types"
 import { useDropZone } from "../../hooks/use-drop-zone"
 import { useFileUpload } from "../../hooks/use-file-upload"
@@ -15,11 +16,29 @@ export const ImageUploader = () => {
     openFilePicker()
   }
 
+  const renderContent = () => {
+    if (isLoading) {
+      return <LoadingIndicator />
+    }
+    if (uploadedImage) {
+      return <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} />
+    }
+    return <DropZone isDragging={isDragging} onClick={openFilePicker} />
+  }
+
   return (
     <div className="flex flex-col gap-2">
-      <div {...dropZoneProps} className={`rounded-lg border-2 border-dashed transition-colors ${isLoading ? "pointer-events-none border-text-muted bg-surface opacity-70" : isDragging ? "border-accent bg-accent/10" : "border-text-muted bg-surface hover:border-accent/50"}`}>
+      <div
+        {...dropZoneProps}
+        className={clsx(
+          "rounded-lg border-2 border-dashed transition-colors",
+          isLoading && "pointer-events-none border-text-muted bg-surface opacity-70",
+          !isLoading && isDragging && "border-accent bg-accent/10",
+          !isLoading && !isDragging && "border-text-muted bg-surface hover:border-accent/50"
+        )}
+      >
         <input ref={fileInputRef} type="file" accept="image/png,image/jpeg" onChange={handleFileSelect} disabled={isLoading} className="hidden" />
-        {isLoading ? <LoadingIndicator /> : uploadedImage ? <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} /> : <DropZone isDragging={isDragging} onClick={openFilePicker} />}
+        {renderContent()}
       </div>
       {error && <p className="text-sm text-warning">{error}</p>}
     </div>
@@ -28,7 +47,7 @@ export const ImageUploader = () => {
 
 const LoadingIndicator = () => {
   return (
-    <div className="flex h-64 items-center justify-center gap-3">
+    <div className="flex h-24 items-center justify-center gap-3">
       <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
       <p className="text-text-muted">Loading image...</p>
     </div>
@@ -37,8 +56,10 @@ const LoadingIndicator = () => {
 
 const DropZone = ({ isDragging, onClick }: { isDragging: boolean; onClick: () => void }) => {
   return (
-    <div onClick={onClick} className="flex h-64 cursor-pointer items-center justify-center">
-      <p className="text-text-muted">{isDragging ? "Drop to upload" : "Drop image here or click to upload"}</p>
+    <div onClick={onClick} className="flex h-24 cursor-pointer items-center justify-center">
+      <p className="text-text-muted">
+        {isDragging ? "Drop to upload" : "Drop image here or click to upload"}
+      </p>
     </div>
   )
 }
