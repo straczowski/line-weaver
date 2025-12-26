@@ -27,7 +27,7 @@ export const App = () => {
         <UploadSection />
         <CanvasSection />
         <ControlSection />
-        <ActionSection />
+        <ActionsSection />
       </main>
     </div>
   )
@@ -79,7 +79,7 @@ const ControlSection = () => {
   )
 }
 
-const ActionSection = () => {
+const ActionsSection = () => {
   return (
     <section className="flex justify-center gap-4">
       <ExportButton />

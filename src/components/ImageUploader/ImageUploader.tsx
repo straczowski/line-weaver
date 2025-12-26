@@ -1,106 +1,25 @@
-import { useEffect, useRef, useState } from "react"
-import { extractImageData } from "../../core/image/extract-image-data"
-import { loadImage } from "../../core/image/load-image"
 import type { UploadedImage } from "../../core/types"
-import { validateImageFile } from "../../core/image/validate-image-file"
-import { useImageActions } from "../../store/actions"
+import { useDropZone } from "../../hooks/use-drop-zone"
+import { useFileUpload } from "../../hooks/use-file-upload"
 
 export const ImageUploader = () => {
-  const [isDragging, setIsDragging] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [uploadedImage, setUploadedImage] = useState<UploadedImage | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
-  const { setUploadedImage: setStoreImage, setImageData } = useImageActions()
+  const { isLoading, error, uploadedImage, fileInputRef, processFile, openFilePicker, handleFileSelect } = useFileUpload()
 
-  useEffect(() => {
-    if (!error) return
-
-    const timeout = setTimeout(() => {
-      setError(null)
-    }, 3000)
-
-    return () => clearTimeout(timeout)
-  }, [error])
-
-  const handleClick = () => {
-    if (isLoading) return
-    fileInputRef.current?.click()
-  }
-
-  const handleDragEnter = (event: React.DragEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    if (isLoading) return
-    setIsDragging(true)
-  }
-
-  const handleDragOver = (event: React.DragEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-  }
-
-  const handleDragLeave = (event: React.DragEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setIsDragging(false)
-  }
-
-  const handleDrop = (event: React.DragEvent) => {
-    event.preventDefault()
-    event.stopPropagation()
-    setIsDragging(false)
-
-    if (isLoading) return
-
-    const file = event.dataTransfer.files[0]
-    if (file) {
-      processFile(file)
-    }
-  }
-
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0]
-    if (file) {
-      processFile(file)
-    }
-  }
-
-  const processFile = async (file: File) => {
-    setError(null)
-
-    const validationResult = validateImageFile(file)
-    if (!validationResult.isValid) {
-      setError(validationResult.error ?? "Invalid file")
-      return
-    }
-
-    setIsLoading(true)
-
-    try {
-      const image = await loadImage(file)
-      setUploadedImage(image)
-      setStoreImage(image)
-      const imageData = await extractImageData(image)
-      setImageData(imageData)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load image")
-    } finally {
-      setIsLoading(false)
-    }
-  }
+  const { isDragging, dropZoneProps } = useDropZone({
+    onDrop: processFile,
+    disabled: isLoading,
+  })
 
   const handleChangeImage = (event: React.MouseEvent) => {
     event.stopPropagation()
-    if (isLoading) return
-    fileInputRef.current?.click()
+    openFilePicker()
   }
 
   return (
     <div className="flex flex-col gap-2">
-      <div onDragEnter={handleDragEnter} onDragOver={handleDragOver} onDragLeave={handleDragLeave} onDrop={handleDrop} className={`rounded-lg border-2 border-dashed transition-colors ${isLoading ? "pointer-events-none border-text-muted bg-surface opacity-70" : isDragging ? "border-accent bg-accent/10" : "border-text-muted bg-surface hover:border-accent/50"}`}>
+      <div {...dropZoneProps} className={`rounded-lg border-2 border-dashed transition-colors ${isLoading ? "pointer-events-none border-text-muted bg-surface opacity-70" : isDragging ? "border-accent bg-accent/10" : "border-text-muted bg-surface hover:border-accent/50"}`}>
         <input ref={fileInputRef} type="file" accept="image/png,image/jpeg" onChange={handleFileSelect} disabled={isLoading} className="hidden" />
-        {isLoading ? <LoadingIndicator /> : uploadedImage ? <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} /> : <DropZone isDragging={isDragging} onClick={handleClick} />}
+        {isLoading ? <LoadingIndicator /> : uploadedImage ? <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} /> : <DropZone isDragging={isDragging} onClick={openFilePicker} />}
       </div>
       {error && <p className="text-sm text-warning">{error}</p>}
     </div>
