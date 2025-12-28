@@ -50,7 +50,7 @@ const DropZone = ({ isDragging, onClick }: { isDragging: boolean; onClick: () =>
   return (
     <div onClick={onClick} className="flex h-24 cursor-pointer items-center justify-center">
       <p className="text-text-muted">
-        {isDragging ? "Drop to upload" : "Drop image here or click to upload"}
+        {isDragging ? "Drop image" : "Drop image here or click to load"}
       </p>
     </div>
   )
