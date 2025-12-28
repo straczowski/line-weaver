@@ -24,7 +24,7 @@ export const VectorizedImage = () => {
 const SvgDisplay = ({ svg }: { svg: string }) => {
   return (
     <div
-      className="flex h-full w-full items-center justify-center [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:object-contain"
+      className="flex h-full w-full items-center justify-center [&>svg]:w-auto [&>svg]:max-h-full [&>svg]:max-w-full [&>svg]:object-contain"
       dangerouslySetInnerHTML={{ __html: svg }}
     />
   )
