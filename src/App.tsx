@@ -3,6 +3,7 @@ import { ControlPanel } from "./components/ControlPanel/ControlPanel"
 import { ExportButtonGCode } from "./components/Export/ExportButtonGCode"
 import { ExportButtonSVG } from "./components/Export/ExportButtonSVG"
 import { GcodeSettings } from "./components/GcodeSettings/GcodeSettings"
+import { Header } from "./components/Header/Header"
 import { ImageUploader } from "./components/ImageUploader/ImageUploader"
 import { OriginalImage } from "./components/Preview/OriginalImage"
 import { PreviewPanel } from "./components/Preview/PreviewPanel"
@@ -32,24 +33,6 @@ export const App = () => {
         <ActionsSection />
       </main>
     </div>
-  )
-}
-
-const Header = () => {
-  return (
-    <header className="border-b border-surface px-4 py-4">
-      <div className="mx-auto flex max-w-7xl items-center justify-between">
-        <h1 className="font-mono text-xl font-bold tracking-wider text-accent">LINE WEAVER</h1>
-        <nav className="flex gap-4">
-          <a href="https://github.com/straczowski/line-weaver" className="text-text-muted transition-colors hover:text-text">
-            GitHub
-          </a>
-          <a href="#" className="text-text-muted transition-colors hover:text-text">
-            Tutorial
-          </a>
-        </nav>
-      </div>
-    </header>
   )
 }
 
