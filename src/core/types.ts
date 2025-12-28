@@ -18,7 +18,7 @@ export type ProcessingConfig = {
   edgeHighThreshold: number
   hatchAngle: number
   hatchDensity: number
-  enableCrossHatch: boolean
+  hatchingMode: HatchingMode
   minLineLength: number
 }
 
@@ -55,7 +55,9 @@ export type BrightnessGrid = {
   values: number[][]
 }
 
-export type LinePattern = "empty" | "diagonal-right" | "diagonal-left" | "cross" | "hatch"
+export type LinePattern = "empty" | "horizontal" | "grid" | "grid-diagonal" | "grid-cross"
+
+export type HatchingMode = "sketch" | "cross"
 
 export type VectorizeImageInput = {
   imageData: ImageData

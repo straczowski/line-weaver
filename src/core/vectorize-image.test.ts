@@ -23,7 +23,7 @@ const createSettings = (overrides: Partial<ProcessingConfig> = {}): ProcessingCo
   edgeHighThreshold: 150,
   hatchAngle: 45,
   hatchDensity: 4,
-  enableCrossHatch: true,
+  hatchingMode: "sketch",
   minLineLength: 0,
   ...overrides,
 })

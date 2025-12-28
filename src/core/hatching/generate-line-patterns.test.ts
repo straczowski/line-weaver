@@ -27,7 +27,7 @@ describe("generateLinePatterns", () => {
     assert.equal(result.length, 0)
   })
 
-  it("should generate single diagonal-right for brightness 153-203", () => {
+  it("should generate single horizontal line for brightness 153-203", () => {
     const grid = createBrightnessGrid(1, 1, 16, [[180]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
@@ -36,24 +36,23 @@ describe("generateLinePatterns", () => {
     assert.equal(result[0].length, 2)
   })
 
-  it("should generate single diagonal-left for brightness 102-152", () => {
+  it("should generate grid pattern with 2 lines for brightness 102-152", () => {
     const grid = createBrightnessGrid(1, 1, 16, [[130]])
-
-    const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
-
-    assert.equal(result.length, 1)
-    assert.equal(result[0].length, 2)
-  })
-
-  it("should generate cross pattern with 2 lines for brightness 51-101", () => {
-    const grid = createBrightnessGrid(1, 1, 16, [[75]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
 
     assert.equal(result.length, 2)
   })
 
-  it("should generate hatch pattern with 4 lines for brightness 0-50", () => {
+  it("should generate grid-diagonal pattern with 3 lines for brightness 51-101", () => {
+    const grid = createBrightnessGrid(1, 1, 16, [[75]])
+
+    const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
+
+    assert.equal(result.length, 3)
+  })
+
+  it("should generate grid-cross pattern with 4 lines for brightness 0-50", () => {
     const grid = createBrightnessGrid(1, 1, 16, [[25]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
@@ -72,19 +71,19 @@ describe("generateLinePatterns", () => {
     assert.equal(result.length, 2)
     const firstLine = result[0]
     assert.equal(firstLine[0].x, 16)
-    assert.equal(firstLine[0].y, 16)
+    assert.equal(firstLine[0].y, 8)
   })
 
-  it("should respect cell size for line length", () => {
+  it("should respect cell size for horizontal line positioning", () => {
     const grid = createBrightnessGrid(1, 1, 32, [[180]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
 
     const line = result[0]
-    const dx = Math.abs(line[1].x - line[0].x)
-    const dy = Math.abs(line[1].y - line[0].y)
-    assert.equal(dx, 32)
-    assert.equal(dy, 32)
+    assert.equal(line[0].x, 0)
+    assert.equal(line[0].y, 16)
+    assert.equal(line[1].x, 32)
+    assert.equal(line[1].y, 16)
   })
 
   it("should handle threshold parameter making output darker", () => {
@@ -118,30 +117,30 @@ describe("generateLinePatterns", () => {
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
 
-    assert.equal(result.length, 4)
+    assert.equal(result.length, 6)
   })
 
-  it("should generate diagonal-right from bottom-left to top-right", () => {
+  it("should generate horizontal line through cell center", () => {
     const grid = createBrightnessGrid(1, 1, 16, [[180]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
 
     const line = result[0]
     assert.equal(line[0].x, 0)
-    assert.equal(line[0].y, 16)
+    assert.equal(line[0].y, 8)
     assert.equal(line[1].x, 16)
-    assert.equal(line[1].y, 0)
+    assert.equal(line[1].y, 8)
   })
 
-  it("should generate diagonal-left from top-left to bottom-right", () => {
+  it("should generate vertical line through cell center for grid pattern", () => {
     const grid = createBrightnessGrid(1, 1, 16, [[130]])
 
     const result = generateLinePatterns({ brightnessGrid: grid, threshold: 128 })
 
-    const line = result[0]
-    assert.equal(line[0].x, 0)
-    assert.equal(line[0].y, 0)
-    assert.equal(line[1].x, 16)
-    assert.equal(line[1].y, 16)
+    const verticalLine = result[1]
+    assert.equal(verticalLine[0].x, 8)
+    assert.equal(verticalLine[0].y, 0)
+    assert.equal(verticalLine[1].x, 8)
+    assert.equal(verticalLine[1].y, 16)
   })
 })

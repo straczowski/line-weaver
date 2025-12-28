@@ -4,36 +4,24 @@ type GenerateAdvancedHatchingInput = {
   brightnessGrid: BrightnessGrid
   hatchAngle?: number
   maxDensity?: number
-  crossHatch?: boolean
   threshold?: number
 }
 
 export const generateAdvancedHatching = (input: GenerateAdvancedHatchingInput): Polyline[] => {
-  const { brightnessGrid, hatchAngle = 45, maxDensity = 4, crossHatch = true, threshold = 128 } = input
+  const { brightnessGrid, hatchAngle = 45, maxDensity = 4, threshold = 128 } = input
 
   const darknessThreshold = 1 - threshold / 255
 
-  const primaryLines = generateHatchLines({
+  return generateHatchLines({
     brightnessGrid,
     angle: hatchAngle,
     maxDensity,
-    crossHatchThreshold: darknessThreshold,
+    darknessThreshold,
   })
-
-  if (!crossHatch) return primaryLines
-
-  const secondaryLines = generateHatchLines({
-    brightnessGrid,
-    angle: hatchAngle + 90,
-    maxDensity: Math.ceil(maxDensity / 2),
-    crossHatchThreshold: Math.min(1, darknessThreshold + 0.2),
-  })
-
-  return [...primaryLines, ...secondaryLines]
 }
 
-const generateHatchLines = (params: { brightnessGrid: BrightnessGrid; angle: number; maxDensity: number; crossHatchThreshold: number }): Polyline[] => {
-  const { brightnessGrid, angle, maxDensity, crossHatchThreshold } = params
+const generateHatchLines = (params: { brightnessGrid: BrightnessGrid; angle: number; maxDensity: number; darknessThreshold: number }): Polyline[] => {
+  const { brightnessGrid, angle, maxDensity, darknessThreshold } = params
   const polylines: Polyline[] = []
 
   for (let row = 0; row < brightnessGrid.rows; row++) {
@@ -41,7 +29,7 @@ const generateHatchLines = (params: { brightnessGrid: BrightnessGrid; angle: num
       const brightness = brightnessGrid.values[row][col]
       const darkness = 1 - brightness / 255
 
-      if (darkness < crossHatchThreshold) continue
+      if (darkness < darknessThreshold) continue
 
       const lineCount = calculateLineCount(darkness, maxDensity)
       const cellLines = generateCellHatchLines({

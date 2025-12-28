@@ -25,10 +25,10 @@ const determinePattern = (brightness: number, threshold: number): LinePattern =>
   const adjustedBrightness = applyThreshold(brightness, threshold)
 
   if (adjustedBrightness >= 204) return "empty"
-  if (adjustedBrightness >= 153) return "diagonal-right"
-  if (adjustedBrightness >= 102) return "diagonal-left"
-  if (adjustedBrightness >= 51) return "cross"
-  return "hatch"
+  if (adjustedBrightness >= 153) return "horizontal"
+  if (adjustedBrightness >= 102) return "grid"
+  if (adjustedBrightness >= 51) return "grid-diagonal"
+  return "grid-cross"
 }
 
 const applyThreshold = (brightness: number, threshold: number): number => {
@@ -42,18 +42,46 @@ const generateCellPolylines = (params: { pattern: LinePattern; row: number; col:
   const y = row * cellSize
 
   if (pattern === "empty") return []
-  if (pattern === "diagonal-right") return [generateDiagonalRight(x, y, cellSize)]
-  if (pattern === "diagonal-left") return [generateDiagonalLeft(x, y, cellSize)]
-  if (pattern === "cross") return generateCross(x, y, cellSize)
-  return generateHatch(x, y, cellSize)
+  if (pattern === "horizontal") return [generateHorizontal(x, y, cellSize)]
+  if (pattern === "grid") return generateGrid(x, y, cellSize)
+  if (pattern === "grid-diagonal") return generateGridDiagonal(x, y, cellSize)
+  return generateGridCross(x, y, cellSize)
 }
 
-const generateDiagonalRight = (x: number, y: number, size: number): Polyline => [createPoint(x, y + size), createPoint(x + size, y)]
+const generateHorizontal = (x: number, y: number, size: number): Polyline => [
+  createPoint(x, y + size / 2),
+  createPoint(x + size, y + size / 2),
+]
 
-const generateDiagonalLeft = (x: number, y: number, size: number): Polyline => [createPoint(x, y), createPoint(x + size, y + size)]
+const generateVertical = (x: number, y: number, size: number): Polyline => [
+  createPoint(x + size / 2, y),
+  createPoint(x + size / 2, y + size),
+]
 
-const generateCross = (x: number, y: number, size: number): Polyline[] => [generateDiagonalRight(x, y, size), generateDiagonalLeft(x, y, size)]
+const generateDiagonalRight = (x: number, y: number, size: number): Polyline => [
+  createPoint(x, y + size),
+  createPoint(x + size, y),
+]
 
-const generateHatch = (x: number, y: number, size: number): Polyline[] => [generateDiagonalRight(x, y, size), generateDiagonalLeft(x, y, size), [createPoint(x, y + size / 2), createPoint(x + size, y + size / 2)], [createPoint(x + size / 2, y), createPoint(x + size / 2, y + size)]]
+const generateDiagonalLeft = (x: number, y: number, size: number): Polyline => [
+  createPoint(x, y),
+  createPoint(x + size, y + size),
+]
+
+const generateGrid = (x: number, y: number, size: number): Polyline[] => [
+  generateHorizontal(x, y, size),
+  generateVertical(x, y, size),
+]
+
+const generateGridDiagonal = (x: number, y: number, size: number): Polyline[] => [
+  ...generateGrid(x, y, size),
+  generateDiagonalRight(x, y, size),
+]
+
+const generateGridCross = (x: number, y: number, size: number): Polyline[] => [
+  ...generateGrid(x, y, size),
+  generateDiagonalRight(x, y, size),
+  generateDiagonalLeft(x, y, size),
+]
 
 const createPoint = (x: number, y: number): Point => ({ x, y })

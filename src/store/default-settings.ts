@@ -13,7 +13,7 @@ export const DEFAULT_SETTINGS: ProcessingConfig = {
   edgeHighThreshold: 150,
   hatchAngle: 45,
   hatchDensity: 4,
-  enableCrossHatch: true,
+  hatchingMode: "sketch",
   minLineLength: 0,
 }
 

@@ -5,10 +5,11 @@ import { convertToGrayscale } from "./image/convert-to-grayscale.ts"
 import { detectEdges } from "./detection/detect-edges.ts"
 import { filterSmallPolylines } from "./polyline/filter-small-polylines.ts"
 import { generateAdvancedHatching } from "./hatching/generate-advanced-hatching.ts"
+import { generateLinePatterns } from "./hatching/generate-line-patterns.ts"
 import { sampleBrightness } from "./detection/sample-brightness.ts"
 import { simplifyPolyline, mapSimplifyLevelToEpsilon } from "./polyline/simplify-polyline.ts"
 import { traceContours } from "./detection/trace-contours.ts"
-import type { GrayscaleData, Polyline, ProcessingConfig, VectorizeImageInput, VectorizeImageOutput } from "./types.ts"
+import type { BrightnessGrid, GrayscaleData, Polyline, ProcessingConfig, VectorizeImageInput, VectorizeImageOutput } from "./types.ts"
 
 export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput => {
   const { imageData, settings } = input
@@ -24,13 +25,7 @@ export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput
   const contourPolylines = settings.enableContours ? processContours(blurredData, settings) : []
 
   const hatchingPolylines = settings.enableHatching
-    ? generateAdvancedHatching({
-        brightnessGrid,
-        hatchAngle: settings.hatchAngle,
-        maxDensity: settings.hatchDensity,
-        crossHatch: settings.enableCrossHatch,
-        threshold: settings.threshold,
-      })
+    ? generateHatching(brightnessGrid, settings)
     : []
 
   const combinedPolylines = combinePolylines({
@@ -79,4 +74,20 @@ const filterSmallPolylinesIfNeeded = (polylines: Polyline[], minLength: number):
   if (minLength <= 0) return polylines
 
   return filterSmallPolylines({ polylines, minLength }).polylines
+}
+
+const generateHatching = (brightnessGrid: BrightnessGrid, settings: ProcessingConfig): Polyline[] => {
+  if (settings.hatchingMode === "cross") {
+    return generateLinePatterns({
+      brightnessGrid,
+      threshold: settings.threshold,
+    })
+  }
+
+  return generateAdvancedHatching({
+    brightnessGrid,
+    hatchAngle: settings.hatchAngle,
+    maxDensity: settings.hatchDensity,
+    threshold: settings.threshold,
+  })
 }

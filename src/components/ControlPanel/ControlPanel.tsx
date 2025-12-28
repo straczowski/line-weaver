@@ -1,5 +1,6 @@
 import { useSettingsActions } from "../../store/actions-hooks"
 import { useSettings } from "../../store/selectors"
+import { ModeSelector } from "./ModeSelector"
 import { SliderControl } from "./SliderControl"
 import { ToggleControl } from "./ToggleControl"
 
@@ -78,6 +79,13 @@ export const ControlPanel = () => {
           checked={settings.enableHatching}
           onChange={(checked) => updateSettings({ enableHatching: checked })}
         />
+        <ModeSelector
+          label="Mode"
+          tooltip="Sketch uses angled lines with variable density. Cross uses grid patterns optimized for pen plotters."
+          value={settings.hatchingMode}
+          onChange={(mode) => updateSettings({ hatchingMode: mode })}
+          disabled={!settings.enableHatching}
+        />
         <SliderControl
           label="Brightness Threshold"
           tooltip="Brightness cutoff for hatching. Areas darker than this value will receive hatch lines."
@@ -88,34 +96,31 @@ export const ControlPanel = () => {
           onChange={(value) => updateSettings({ threshold: value })}
           disabled={!settings.enableHatching}
         />
-        <SliderControl
-          label="Angle"
-          tooltip="Direction of hatch lines in degrees. 0° is horizontal, 90° is vertical."
-          value={settings.hatchAngle}
-          min={0}
-          max={180}
-          step={15}
-          unit="°"
-          onChange={(value) => updateSettings({ hatchAngle: value })}
-          disabled={!settings.enableHatching}
-        />
-        <SliderControl
-          label="Density"
-          tooltip="Maximum number of hatch lines per cell in the darkest areas. Higher values create denser shading."
-          value={settings.hatchDensity}
-          min={1}
-          max={8}
-          step={1}
-          onChange={(value) => updateSettings({ hatchDensity: value })}
-          disabled={!settings.enableHatching}
-        />
-        <ToggleControl
-          label="Cross-Hatch"
-          tooltip="Add perpendicular lines in darker areas for richer shading."
-          checked={settings.enableCrossHatch}
-          onChange={(checked) => updateSettings({ enableCrossHatch: checked })}
-          disabled={!settings.enableHatching}
-        />
+        {settings.hatchingMode === "sketch" && (
+          <>
+            <SliderControl
+              label="Angle"
+              tooltip="Direction of hatch lines in degrees. 0° is horizontal, 90° is vertical."
+              value={settings.hatchAngle}
+              min={0}
+              max={180}
+              step={15}
+              unit="°"
+              onChange={(value) => updateSettings({ hatchAngle: value })}
+              disabled={!settings.enableHatching}
+            />
+            <SliderControl
+              label="Density"
+              tooltip="Maximum number of hatch lines per cell in the darkest areas. Higher values create denser shading."
+              value={settings.hatchDensity}
+              min={1}
+              max={8}
+              step={1}
+              onChange={(value) => updateSettings({ hatchDensity: value })}
+              disabled={!settings.enableHatching}
+            />
+          </>
+        )}
       </ControlSection>
 
       <ControlSection title="Output">

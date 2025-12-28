@@ -52,15 +52,6 @@ describe("generateAdvancedHatching", () => {
     assert.ok(highDensity.length > lowDensity.length, `Higher density should produce more lines: low=${lowDensity.length}, high=${highDensity.length}`)
   })
 
-  it("should add cross-hatch lines when enabled", () => {
-    const grid = createBrightnessGrid([[0]])
-
-    const withCrossHatch = generateAdvancedHatching({ brightnessGrid: grid, crossHatch: true })
-    const withoutCrossHatch = generateAdvancedHatching({ brightnessGrid: grid, crossHatch: false })
-
-    assert.ok(withCrossHatch.length > withoutCrossHatch.length, `Cross-hatch should add more lines: with=${withCrossHatch.length}, without=${withoutCrossHatch.length}`)
-  })
-
   it("should generate lines at specified angle", () => {
     const grid = createBrightnessGrid([[0]])
 
@@ -75,7 +66,7 @@ describe("generateAdvancedHatching", () => {
   it("should generate vertical lines at 90 degrees", () => {
     const grid = createBrightnessGrid([[0]])
 
-    const result = generateAdvancedHatching({ brightnessGrid: grid, hatchAngle: 90, crossHatch: false })
+    const result = generateAdvancedHatching({ brightnessGrid: grid, hatchAngle: 90 })
 
     assert.ok(result.length > 0)
     const line = result[0]
