@@ -2,7 +2,7 @@ import { useEffect } from "react"
 import { ControlPanel } from "./components/ControlPanel/ControlPanel"
 import { ExportButtonGCode } from "./components/Export/ExportButtonGCode"
 import { ExportButtonSVG } from "./components/Export/ExportButtonSVG"
-import { GcodeSettingsPanel } from "./components/GcodeSettingsPanel/GcodeSettingsPanel"
+import { GcodeSettings } from "./components/GcodeSettings/GcodeSettings"
 import { ImageUploader } from "./components/ImageUploader/ImageUploader"
 import { OriginalImage } from "./components/Preview/OriginalImage"
 import { PreviewPanel } from "./components/Preview/PreviewPanel"
@@ -80,7 +80,7 @@ const ControlSection = () => {
   return (
     <section className="mb-8 space-y-4">
       <ControlPanel />
-      <GcodeSettingsPanel />
+      <GcodeSettings />
     </section>
   )
 }

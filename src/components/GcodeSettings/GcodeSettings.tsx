@@ -2,7 +2,7 @@ import { useState } from "react"
 import { useGcodeSettingsActions } from "../../store/actions-hooks"
 import { useGcodeSettings } from "../../store/selectors"
 
-export const GcodeSettingsPanel = () => {
+export const GcodeSettings = () => {
   const [isExpanded, setIsExpanded] = useState(false)
   const gcodeSettings = useGcodeSettings()
   const { updateGcodeCommands, updateGcodeSheet } = useGcodeSettingsActions()
