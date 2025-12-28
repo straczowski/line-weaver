@@ -1,23 +1,18 @@
-import { useProcessingStatus, useSvgOutput } from "../../store/selectors"
+import { useProcessingStatus, useSvgOutput, useUploadedImage } from "../../store/selectors"
+import { downloadFile, extractFilenameWithoutExtension } from "./utils"
 
-export const ExportButton = () => {
+export const ExportButtonSVG = () => {
   const svgOutput = useSvgOutput()
+  const uploadedImage = useUploadedImage()
   const processingStatus = useProcessingStatus()
 
   const isDisabled = svgOutput === null || processingStatus === "processing"
 
   const handleDownload = () => {
-    if (!svgOutput) return
+    if (!svgOutput || !uploadedImage) return
 
-    const blob = new Blob([svgOutput], { type: "image/svg+xml" })
-    const url = URL.createObjectURL(blob)
-    const link = document.createElement("a")
-    link.href = url
-    link.download = "line-weaver-output.svg"
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
-    URL.revokeObjectURL(url)
+    const filename = extractFilenameWithoutExtension(uploadedImage.file.name)
+    downloadFile({ content: svgOutput, filename: `${filename}.svg`, mimeType: "image/svg+xml" })
   }
 
   return (

@@ -1,7 +1,8 @@
 import { generateGcode } from "../../core/gcode/generate-gcode"
 import { useGcodeSettings, usePolylines, useProcessingStatus, useUploadedImage } from "../../store/selectors"
+import { downloadFile, extractFilenameWithoutExtension } from "./utils"
 
-export const ExportGcodeButton = () => {
+export const ExportButtonGCode = () => {
   const polylines = usePolylines()
   const uploadedImage = useUploadedImage()
   const processingStatus = useProcessingStatus()
@@ -19,7 +20,7 @@ export const ExportGcodeButton = () => {
     })
 
     const filename = extractFilenameWithoutExtension(uploadedImage.file.name)
-    downloadGcode(gcode, `${filename}.gcode`)
+    downloadFile({ content: gcode, filename: `${filename}.gcode`, mimeType: "text/plain" })
   }
 
   return (
@@ -27,21 +28,4 @@ export const ExportGcodeButton = () => {
       Download GCODE
     </button>
   )
-}
-
-const extractFilenameWithoutExtension = (filename: string): string => {
-  const lastDotIndex = filename.lastIndexOf(".")
-  return lastDotIndex > 0 ? filename.slice(0, lastDotIndex) : filename
-}
-
-const downloadGcode = (content: string, filename: string) => {
-  const blob = new Blob([content], { type: "text/plain" })
-  const url = URL.createObjectURL(blob)
-  const link = document.createElement("a")
-  link.href = url
-  link.download = filename
-  document.body.appendChild(link)
-  link.click()
-  document.body.removeChild(link)
-  URL.revokeObjectURL(url)
 }

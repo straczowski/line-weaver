@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { ControlPanel } from "./components/ControlPanel/ControlPanel"
-import { ExportButton } from "./components/ExportButton/ExportButton"
-import { ExportGcodeButton } from "./components/ExportGcodeButton/ExportGcodeButton"
+import { ExportButtonGCode } from "./components/Export/ExportButtonGCode"
+import { ExportButtonSVG } from "./components/Export/ExportButtonSVG"
 import { GcodeSettingsPanel } from "./components/GcodeSettingsPanel/GcodeSettingsPanel"
 import { ImageUploader } from "./components/ImageUploader/ImageUploader"
 import { OriginalImage } from "./components/Preview/OriginalImage"
@@ -88,8 +88,8 @@ const ControlSection = () => {
 const ActionsSection = () => {
   return (
     <section className="flex justify-center gap-4">
-      <ExportButton />
-      <ExportGcodeButton />
+      <ExportButtonSVG />
+      <ExportButtonGCode />
     </section>
   )
 }
