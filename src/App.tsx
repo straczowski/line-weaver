@@ -4,7 +4,9 @@ import { ExportButton } from "./components/ExportButton/ExportButton"
 import { ExportGcodeButton } from "./components/ExportGcodeButton/ExportGcodeButton"
 import { GcodeSettingsPanel } from "./components/GcodeSettingsPanel/GcodeSettingsPanel"
 import { ImageUploader } from "./components/ImageUploader/ImageUploader"
-import { PreviewCanvas } from "./components/PreviewCanvas/PreviewCanvas"
+import { OriginalImage } from "./components/Preview/OriginalImage"
+import { PreviewPanel } from "./components/Preview/PreviewPanel"
+import { VectorizedImage } from "./components/Preview/VectorizedImage"
 import { useDebouncedSettings } from "./hooks/use-debounced-settings"
 import { useVectorize } from "./hooks/use-vectorize"
 import { useImageData } from "./store/selectors"
@@ -63,8 +65,12 @@ const CanvasSection = () => {
   return (
     <section className="mb-8">
       <div className="mt-6 grid gap-6 md:grid-cols-2">
-        <PreviewCanvas title="Original" />
-        <PreviewCanvas title="Vectorized" />
+        <PreviewPanel title="Original">
+          <OriginalImage />
+        </PreviewPanel>
+        <PreviewPanel title="Vectorized">
+          <VectorizedImage />
+        </PreviewPanel>
       </div>
     </section>
   )

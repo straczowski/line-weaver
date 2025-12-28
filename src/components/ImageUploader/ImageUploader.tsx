@@ -2,6 +2,7 @@ import clsx from "clsx"
 import type { UploadedImage } from "../../core/types"
 import { useDropZone } from "../../hooks/use-drop-zone"
 import { useFileUpload } from "../../hooks/use-file-upload"
+import { LoadingIndicator } from "../LoadingIndicator/LoadingIndicator"
 
 export const ImageUploader = () => {
   const { isLoading, error, uploadedImage, fileInputRef, processFile, openFilePicker, handleFileSelect } = useFileUpload()
@@ -18,7 +19,7 @@ export const ImageUploader = () => {
 
   const renderContent = () => {
     if (isLoading) {
-      return <LoadingIndicator />
+      return <LoadingIndicator message="Loading image..." size="sm" className="h-24 justify-center" />
     }
     if (uploadedImage) {
       return <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} />
@@ -41,15 +42,6 @@ export const ImageUploader = () => {
         {renderContent()}
       </div>
       {error && <p className="text-sm text-warning">{error}</p>}
-    </div>
-  )
-}
-
-const LoadingIndicator = () => {
-  return (
-    <div className="flex h-24 items-center justify-center gap-3">
-      <div className="h-5 w-5 animate-spin rounded-full border-2 border-accent border-t-transparent" />
-      <p className="text-text-muted">Loading image...</p>
     </div>
   )
 }
