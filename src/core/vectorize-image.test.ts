@@ -95,17 +95,6 @@ describe("vectorizeImage", () => {
     assert.ok(highThreshold.polylines.length >= lowThreshold.polylines.length)
   })
 
-  it("should include grid metadata in output", () => {
-    const imageData = createImageData(32, 32, new Array(32 * 32 * 4).fill(128))
-    const settings = createSettings({ gridSize: 16 })
-
-    const result = vectorizeImage({ imageData, settings })
-
-    assert.equal(result.grid.cols, 2)
-    assert.equal(result.grid.rows, 2)
-    assert.equal(result.grid.cellSize, 16)
-  })
-
   it("should produce polylines with valid point structure", () => {
     const rgba = []
     for (let i = 0; i < 16 * 16; i++) {
@@ -132,20 +121,6 @@ describe("vectorizeImage", () => {
 
     const result = vectorizeImage({ imageData, settings })
 
-    assert.equal(result.grid.cols, 2)
-    assert.equal(result.grid.rows, 1)
-  })
-
-  it("should handle grayscale conversion correctly in pipeline", () => {
-    const rgba = []
-    for (let i = 0; i < 16 * 16; i++) {
-      rgba.push(255, 0, 0, 255)
-    }
-    const imageData = createImageData(16, 16, rgba)
-    const settings = createSettings()
-
-    const result = vectorizeImage({ imageData, settings })
-
-    assert.ok(result.grid.values[0][0] < 100)
+    assert.ok(Array.isArray(result.polylines))
   })
 })

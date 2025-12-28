@@ -7,7 +7,7 @@ import type {
   UploadedImage,
 } from "../core/types"
 
-export type ProcessingStatus = "idle" | "loading" | "processing" | "complete" | "error"
+export type ProcessingStatus = "idle" | "processing" | "complete" | "error"
 
 export type AppState = {
   uploadedImage: UploadedImage | null

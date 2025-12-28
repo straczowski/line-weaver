@@ -22,12 +22,6 @@ export type ProcessingConfig = {
   minLineLength: number
 }
 
-export type ProcessingState = {
-  status: "idle" | "loading" | "processing" | "complete" | "error"
-  progress: number
-  errorMessage?: string
-}
-
 export type ImageData = {
   width: number
   height: number
@@ -66,7 +60,6 @@ export type VectorizeImageInput = {
 
 export type VectorizeImageOutput = {
   polylines: Polyline[]
-  grid: BrightnessGrid
 }
 
 export type SvgDimensions = {

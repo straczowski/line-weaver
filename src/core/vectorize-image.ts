@@ -39,7 +39,7 @@ export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput
 
   const finalPolylines = filterSmallPolylinesIfNeeded(noisyPolylines, settings.minLineLength)
 
-  return { polylines: finalPolylines, grid: brightnessGrid }
+  return { polylines: finalPolylines }
 }
 
 const applyBlurIfNeeded = (grayscaleData: GrayscaleData, blurRadius: number): GrayscaleData => {

@@ -1,9 +1,5 @@
+import { useProcessingError, useProcessingStatus, useSvgOutput } from "../../store/selectors"
 import { LoadingIndicator } from "../LoadingIndicator/LoadingIndicator"
-import {
-  useProcessingError,
-  useProcessingStatus,
-  useSvgOutput,
-} from "../../store/selectors"
 
 export const VectorizedImage = () => {
   const svgOutput = useSvgOutput()
@@ -46,6 +42,6 @@ const ErrorDisplay = ({ message }: { message: string }) => {
 }
 
 const Placeholder = () => {
-  return <p className="text-text-muted">No image uploaded</p>
+  return <p className="text-text-muted"></p>
 }
 
