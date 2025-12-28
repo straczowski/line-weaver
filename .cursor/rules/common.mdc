@@ -1,0 +1,149 @@
+---
+description: Coding rules for line-weaver
+alwaysApply: true
+---
+
+# Line Weaver Coding Rules
+
+## General Principles
+
+- Use functional, declarative programming (no classes)
+- If there are more than two parameters for a method then follow RORO pattern (Receive Object, Return Object)
+- Use arrow functions
+- Omit semicolons
+- Never use logging
+- Never use Enums in TypeScript (use const objects or union types instead)
+- Never use comments
+- For method names use verbs to describe their action
+- Use descriptive variable names with auxiliary verbs (e.g., `isConnected`, `hasError`)
+- Never use Barrel Files
+- Avoid Abbreviations
+- Avoid using "From" in method names
+- Before finishing task, always check if you can smaller methods
+
+## Top Down File Structure
+
+Place the main entry point of a file at the top, followed by functions in the order they are called. This lets you read the file top-down, following the program flow naturally without jumping around. A reader should be able to open a file and understand the flow of logic simply by scrolling downward. The top of the file should describe high-level behavior, and each subsequent function should reveal more detail—just like reading a well-structured narrative.
+
+In best case scenario the entry-point method is same named as the file. E.g. the method `startServer()` comes from the file `start-server.ts`
+
+### Example Structure
+
+1. Public entry point function
+2. High-level orchestration functions
+3. Mid-level helpers
+4. Low-level utility functions
+
+## Use Zod for Schema Validation
+
+Always use Zod schema validation and type safety. Anytime we have to parse an unkown object e.g. coming from API or reading environment variables we want to use zod library for validation
+
+### Pattern
+
+```typescript
+import { z } from "zod"
+
+const configSchema = z.object({
+  LINE_WEAVER_ENV: z.string(),
+})
+
+export type Config = z.infer<typeof configSchema>
+
+export const loadConfig = (): Config => {
+  return configSchema.parse(process.env)
+}
+```
+
+### Rules
+
+- Use Zod schemas for all environment variable validation
+- Export typed config with `z.infer<typeof schema>`
+- Fail fast on missing required configuration - let Zod throw
+
+## Testing with node:test
+
+Use Node.js native test framework exclusively.
+
+### Pattern
+
+```typescript
+import assert from "node:assert"
+import { afterEach, beforeEach, describe, it } from "node:test"
+
+describe("Config", () => {
+  const originalEnv = process.env
+
+  beforeEach(() => {
+    process.env = { ...originalEnv }
+  })
+
+  afterEach(() => {
+    process.env = originalEnv
+  })
+
+  it("should load configuration with all required variables", () => {
+    process.env.LINE_WEAVER_ENV = "env"
+
+    const config = loadConfig()
+
+    assert.equal(config.LINE_WEAVER_ENV, "env")
+  })
+
+  it("should fail if required variable is missing", () => {
+    delete process.env.LINE_WEAVER_ENV
+
+    assert.throws(() => loadConfig())
+  })
+})
+```
+
+### Rules
+
+- Use native `node:test` module (no Jest or other frameworks)
+- Import from `node:assert` for assertions
+- Use `describe`, `it`, `beforeEach`, `afterEach` structure
+- Test environment variables: save original in `const originalEnv`, restore in `afterEach`
+- Test both happy paths and error cases
+- Test validation logic thoroughly
+- Test one behavior per test case
+- Use descriptive test names starting with "should"
+- Test edge cases (missing values, invalid types, boundary conditions)
+- Keep tests focused and fast
+- Aim for 10-15 tests maximum per test file
+
+## Keep Methods Small and at a Single Abstraction Level
+
+Methods must be small, focused, and operate at one consistent level of abstraction. A method should either describe what happens (high-level intention) or how it happens (low-level details). Small, well-focused methods are easier to understand, test, and maintain.
+
+## Fail Early & Return Happy Path at the End
+
+Methods should fail fast on invalid conditions and always return the successful result at the end. Avoid nesting the main logic inside multiple if or else blocks — the “happy path” should be clear, linear, and unindented. Keeping the happy path at the bottom or after all validations ensures the main logic is easy to read top-down, with early exits handling exceptional cases.
+
+### Guidelines:
+
+- Check invalid conditions first; throw errors or return early.
+- Keep the successful outcome at the end of the method, clearly showing the happy path.
+- Avoid deep nesting. each method should read like a straight narrative from top to bottom.
+- Use intention-revealing variable names for the returned object.
+
+### Example Pattern
+
+```typescript
+function loadConfig() {
+  const config = parse(process.env)
+  if (!config) {
+    throw new Error("Environment variables are not set") // fail early
+  }
+  return config // happy path
+}
+```
+
+## Lokalitätsprinzip – Invoke Methods Where They Are Needed
+
+Methods should be called close to where their results are used. Avoid scattering method calls far from their context or orchestrating logic from distant parts of the code.
+
+### Guidelines:
+
+- Call helper methods right before or where their result is needed.
+- Avoid precomputing values at the top of a function if they are only used much later.
+- Keep dependent operations grouped together; the reader should not need to scroll or search to understand the logic flow.
