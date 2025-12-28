@@ -1,14 +1,14 @@
 import type { GcodeSettings, ProcessingConfig } from "../core/types"
 
 export const DEFAULT_SETTINGS: ProcessingConfig = {
-  gridSize: 16,
-  strokeWidth: 1,
+  gridSize: 24,
+  strokeWidth: 3,
   contourSimplify: 2,
   enableContours: true,
   enableHatching: true,
   noiseAmount: 0,
   threshold: 128,
-  blurRadius: 1,
+  blurRadius: 0,
   edgeLowThreshold: 50,
   edgeHighThreshold: 150,
   hatchAngle: 45,

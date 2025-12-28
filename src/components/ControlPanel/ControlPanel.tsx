@@ -1,6 +1,7 @@
-import { useState } from "react"
 import { useSettingsActions } from "../../store/actions-hooks"
 import { useSettings } from "../../store/selectors"
+import { SliderControl } from "./SliderControl"
+import { ToggleControl } from "./ToggleControl"
 
 export const ControlPanel = () => {
   const settings = useSettings()
@@ -129,17 +130,16 @@ export const ControlPanel = () => {
           onChange={(value) => updateSettings({ noiseAmount: value })}
         />
         <SliderControl
-          label="Min Line Length"
+          label="Min Line Length Filter"
           tooltip="Removes polylines shorter than this value. Helps clean up small artifacts and noise."
           value={settings.minLineLength}
           min={0}
-          max={20}
+          max={40}
           step={1}
-          unit="px"
           onChange={(value) => updateSettings({ minLineLength: value })}
         />
         <SliderControl
-          label="Stroke Width"
+          label="Stroke Width SVG"
           tooltip="Thickness of lines in the SVG output. Affects visual weight of the drawing."
           value={settings.strokeWidth}
           min={0.5}
@@ -169,99 +169,3 @@ const ControlSection = ({ title, children }: ControlSectionProps) => {
   )
 }
 
-type TooltipIconProps = {
-  text: string
-}
-
-const TooltipIcon = ({ text }: TooltipIconProps) => {
-  const [isVisible, setIsVisible] = useState(false)
-
-  return (
-    <div
-      className="relative inline-flex"
-      onMouseEnter={() => setIsVisible(true)}
-      onMouseLeave={() => setIsVisible(false)}
-    >
-      <span className="ml-1.5 flex h-4 w-4 cursor-help items-center justify-center rounded-full bg-text-muted/20 text-[10px] font-medium text-text-muted transition-colors hover:bg-accent/30 hover:text-accent">
-        ?
-      </span>
-      {isVisible && (
-        <div className="absolute bottom-full left-1/2 z-50 mb-2 w-56 -translate-x-1/2 rounded-md bg-background px-3 py-2 text-xs text-text shadow-lg ring-1 ring-text-muted/20">
-          {text}
-          <div className="absolute left-1/2 top-full h-0 w-0 -translate-x-1/2 border-x-4 border-t-4 border-x-transparent border-t-background" />
-        </div>
-      )}
-    </div>
-  )
-}
-
-type SliderControlProps = {
-  label: string
-  tooltip: string
-  value: number
-  min: number
-  max: number
-  step: number
-  unit?: string
-  onChange: (value: number) => void
-  disabled?: boolean
-}
-
-const SliderControl = ({ label, tooltip, value, min, max, step, unit, onChange, disabled = false }: SliderControlProps) => {
-  return (
-    <div className={`flex flex-col gap-2 transition-opacity ${disabled ? "pointer-events-none opacity-40" : ""}`}>
-      <div className="flex items-center justify-between">
-        <span className="flex items-center text-sm text-text">
-          {label}
-          <TooltipIcon text={tooltip} />
-        </span>
-        <span className="font-mono text-sm text-accent">
-          {value}
-          {unit}
-        </span>
-      </div>
-      <input
-        type="range"
-        min={min}
-        max={max}
-        step={step}
-        value={value}
-        onChange={(e) => onChange(Number(e.target.value))}
-        disabled={disabled}
-        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-background accent-accent disabled:cursor-not-allowed"
-      />
-    </div>
-  )
-}
-
-type ToggleControlProps = {
-  label: string
-  tooltip: string
-  checked: boolean
-  onChange: (checked: boolean) => void
-  disabled?: boolean
-}
-
-const ToggleControl = ({ label, tooltip, checked, onChange, disabled = false }: ToggleControlProps) => {
-  return (
-    <div className={`flex items-center justify-between transition-opacity ${disabled ? "pointer-events-none opacity-40" : ""}`}>
-      <span className="flex items-center text-sm text-text">
-        {label}
-        <TooltipIcon text={tooltip} />
-      </span>
-      <button
-        onClick={() => onChange(!checked)}
-        disabled={disabled}
-        className={`relative h-6 w-11 rounded-full transition-colors ${
-          checked ? "bg-accent" : "bg-background"
-        } disabled:cursor-not-allowed`}
-      >
-        <span
-          className={`absolute top-1 h-4 w-4 rounded-full bg-text transition-transform ${
-            checked ? "left-6" : "left-1"
-          }`}
-        />
-      </button>
-    </div>
-  )
-}
