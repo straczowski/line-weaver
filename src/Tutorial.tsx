@@ -24,20 +24,20 @@ const BackButton = () => {
 const ContentSection = () => {
   return (
     <section className="space-y-8">
-      <TextSection />
-      <ImageSection />
-      <VideoSection />
+      <IntroductionSection />
+      <PenPlotterSection />
+      <AssetsSection />
     </section>
   )
 }
 
-const TextSection = () => {
+const IntroductionSection = () => {
   return (
     <div className="space-y-4">
-      <h2 className="font-mono text-2xl font-bold text-accent">How to Use Line Weaver</h2>
+      <h2 className="font-mono text-2xl font-bold text-accent">What is it for?</h2>
       <div className="space-y-4 text-text">
         <p>
-          Line Weaver is a tool for converting images into vectorized line art and generating G-code for plotting or engraving.
+          Line Weaver is a tool for converting images into vectorized line art and generating G-code for specialized for pen plotters.
         </p>
         <p>
           Upload an image to get started. The tool will automatically process it and generate a vectorized version that you can preview, adjust, and export.
@@ -47,52 +47,76 @@ const TextSection = () => {
   )
 }
 
-const ImageSection = () => {
+const PenPlotterSection = () => {
   return (
     <div className="space-y-4">
-      <h2 className="font-mono text-2xl font-bold text-accent">Examples</h2>
-      <div className="space-y-4">
-        <p className="text-text-muted">
-          Place tutorial images in the <code className="text-text">public/tutorial/</code> directory and reference them here.
+      <h2 className="font-mono text-2xl font-bold text-accent">Pen Plotter Setup</h2>
+      <div className="space-y-4 text-text">
+        <p>
+        I am using an open-source CNC system based on a Raspberry Pi and an Arduino, controlled by {" "}
+          <a
+            href="https://github.com/grbl/grbl"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline transition-colors hover:text-accent/80"
+          >
+            grbl
+          </a>{" "}
+          firmware.
         </p>
-        <div className="rounded border border-surface p-4">
-          <img
-            src="/tutorial/example-1.png"
-            alt="Tutorial example"
-            className="w-full rounded"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.style.display = "none"
-            }}
-          />
-        </div>
+        <p>
+          If you want to override the GCode commands in Line Weaver you can expand the GCode Settings section.
+        </p>
+        <p>
+          Sheet dimension is set to DIN A4 (297mm × 211mm) by default. Pen must start at the very corner of the sheet.
+        </p>
       </div>
     </div>
   )
 }
 
-const VideoSection = () => {
+const AssetsSection = () => {
   return (
     <div className="space-y-4">
-      <h2 className="font-mono text-2xl font-bold text-accent">Video Tutorial</h2>
-      <div className="space-y-4">
-        <p className="text-text-muted">
-          Place tutorial videos in the <code className="text-text">public/tutorial/</code> directory and reference them here.
-        </p>
-        <div className="rounded border border-surface p-4">
-          <video
-            src="/tutorial/tutorial-video.mp4"
-            controls
-            className="w-full rounded"
-            onError={(e) => {
-              const target = e.target as HTMLVideoElement
-              target.style.display = "none"
-            }}
-          >
-            Your browser does not support the video tag.
-          </video>
-        </div>
+      <h2 className="font-mono text-2xl font-bold text-accent">Example</h2>
+      <div className="grid grid-cols-2 gap-4">
+        <AssetItem src="/line-weaver/tutorial/input-1.jpg" alt="Input image" type="image" />
+        <AssetItem src="/line-weaver/tutorial/output-2.mp4" alt="Output video" type="video" />
+        <AssetItem src="/line-weaver/tutorial/output-3.jpg" alt="Output image 3" type="image" />
+        <AssetItem src="/line-weaver/tutorial/output-4.jpg" alt="Output image 4" type="image" />
       </div>
+    </div>
+  )
+}
+
+const AssetItem = ({ src, alt, type }: { src: string; alt: string; type: "image" | "video" }) => {
+  return (
+    <div className="aspect-square overflow-hidden rounded border border-surface">
+      {type === "image" ? (
+        <img
+          src={src}
+          alt={alt}
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLImageElement
+            target.style.display = "none"
+          }}
+        />
+      ) : (
+        <video
+          src={src}
+          autoPlay
+          loop
+          muted
+          className="h-full w-full object-cover"
+          onError={(e) => {
+            const target = e.target as HTMLVideoElement
+            target.style.display = "none"
+          }}
+        >
+          Your browser does not support the video tag.
+        </video>
+      )}
     </div>
   )
 }
