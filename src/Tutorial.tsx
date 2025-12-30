@@ -40,7 +40,10 @@ const IntroductionSection = () => {
           Line Weaver is a tool for converting images into vectorized line art and generating G-code specialized for pen plotters.
         </p>
         <p>
-          Upload an image to get started. The tool will automatically process it and generate a vectorized version that you can preview, adjust, and export.
+          This tool runs entirely client-side in your browser. Your images are not uploaded or stored anywhere.
+        </p>
+        <p>
+          Drop an image to get started. The tool will automatically process it and generate a vectorized version that you can preview, adjust, and export.
         </p>
       </div>
     </div>
