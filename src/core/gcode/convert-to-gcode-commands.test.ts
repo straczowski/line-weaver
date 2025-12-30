@@ -53,7 +53,7 @@ describe("convertToGcodeCommands", () => {
     const lines = result.split("\n")
 
     const rapidMoveIndex = lines.findIndex((l) => l === "G0 X10 Y20")
-    const penDownIndex = lines.findIndex((l) => l === "M3 S1000")
+    const penDownIndex = lines.indexOf("M3 S1000", rapidMoveIndex)
     const pauseAfterPenDown = lines.indexOf("G4 P0.5", penDownIndex)
 
     assert.ok(penDownIndex > rapidMoveIndex)

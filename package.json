@@ -9,7 +9,7 @@
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx}\"",
     "preview": "vite preview",
-    "test": "node --experimental-strip-types --test src/**/*.test.ts"
+    "test": "node --experimental-strip-types --test"
   },
   "dependencies": {
     "@redux-devtools/extension": "^3.3.0",

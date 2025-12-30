@@ -2,7 +2,7 @@
 
 Convert images to vectorized line drawings optimized for pen plotters. Pure browser-based processing—no backend, no API calls, just TypeScript and Canvas.
 
-[Live Demo](https://straczowski.github.io/line-weaver/) · [Tutorial](https://straczowski.github.io/line-weaver/tutorial)
+👉 [Live Demo](https://straczowski.github.io/line-weaver/) · [Tutorial](https://straczowski.github.io/line-weaver/tutorial)
 
 ## Setup
 

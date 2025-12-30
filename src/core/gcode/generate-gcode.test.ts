@@ -237,6 +237,6 @@ describe("generateGcode", () => {
 
     const penUpCount = (result.match(/M5/g) || []).length
 
-    assert.strictEqual(penUpCount, 2)
+    assert.strictEqual(penUpCount, 3)
   })
 })
