@@ -4,7 +4,8 @@ export const Header = () => {
   return (
     <header className="border-b border-surface px-4 py-4">
       <div className="mx-auto flex max-w-7xl items-center justify-between">
-        <Link to="/" className="font-mono text-xl font-bold tracking-wider text-accent">
+        <Link to="/" className="flex items-center gap-3 font-mono text-xl font-bold tracking-wider text-accent">
+          <img src="/line-weaver/favicon.svg" alt="Line Weaver" className="h-5 w-5" />
           LINE WEAVER
         </Link>
         <nav className="flex gap-4">
