@@ -26,6 +26,7 @@ const ContentSection = () => {
     <section className="space-y-8">
       <IntroductionSection />
       <PenPlotterSection />
+      <SendCodeSection />
       <AssetsSection />
     </section>
   )
@@ -37,7 +38,7 @@ const IntroductionSection = () => {
       <h2 className="font-mono text-2xl font-bold text-accent">What is it for?</h2>
       <div className="space-y-4 text-text">
         <p>
-          Line Weaver is a tool for converting images into vectorized line art and generating G-code specialized for pen plotters.
+          Line Weaver is a tool for converting images into vectorized line art and generating <a href="https://reprap.org/wiki/G-code" target="_blank" rel="noopener noreferrer" className="text-accent underline transition-colors hover:text-accent/80">G-Code</a> specialized for pen plotters.
         </p>
         <p>
           This tool runs entirely client-side in your browser. Your images are not uploaded or stored anywhere.
@@ -68,10 +69,30 @@ const PenPlotterSection = () => {
           firmware.
         </p>
         <p>
-          If you want to override the GCode commands in Line Weaver you can expand the GCode Settings section.
+          If you want to override the G-Code commands in Line Weaver you can expand the G-Code Settings section.
         </p>
         <p>
           Sheet dimension is set to DIN A4 (297mm × 211mm) by default. Pen must start at the very corner of the sheet.
+        </p>
+      </div>
+    </div>
+  )
+}
+
+const SendCodeSection = () => {
+  return (
+    <div className="space-y-4">
+      <h2 className="font-mono text-2xl font-bold text-accent">Send G-Code to Plotter</h2>
+      <div className="space-y-4 text-text">
+        <p>
+          If you are using MacOS or Linux you might want to check my other project <a
+            href="https://github.com/straczowski/macos-gcode-sender"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-accent underline transition-colors hover:text-accent/80"
+          >
+            macos-gcode-sender
+          </a> which contains scripts for sending G-Code to the plotter.
         </p>
       </div>
     </div>
