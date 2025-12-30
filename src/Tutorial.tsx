@@ -37,7 +37,7 @@ const IntroductionSection = () => {
       <h2 className="font-mono text-2xl font-bold text-accent">What is it for?</h2>
       <div className="space-y-4 text-text">
         <p>
-          Line Weaver is a tool for converting images into vectorized line art and generating G-code for specialized for pen plotters.
+          Line Weaver is a tool for converting images into vectorized line art and generating G-code specialized for pen plotters.
         </p>
         <p>
           Upload an image to get started. The tool will automatically process it and generate a vectorized version that you can preview, adjust, and export.
