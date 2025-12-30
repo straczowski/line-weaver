@@ -29,7 +29,7 @@ export type ImageData = {
   colorSpace: PredefinedColorSpace
 }
 
-export type UploadedImage = {
+export type OriginalImageMetadata = {
   file: File
   dataUrl: string
   width: number

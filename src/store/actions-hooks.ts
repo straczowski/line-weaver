@@ -4,8 +4,8 @@ import { useStore } from "./store"
 export const useImageActions = () =>
   useStore(
     useShallow((state) => ({
-      setUploadedImage: state.setUploadedImage,
-      setImageData: state.setImageData,
+      setOriginalImage: state.setOriginalImage,
+      setScaledImageData: state.setScaledImageData,
     }))
   )
 

@@ -2,16 +2,16 @@ import type {
   GcodeCommandSettings,
   GcodeSettings,
   GcodeSheetSettings,
+  OriginalImageMetadata,
   Polyline,
   ProcessingConfig,
-  UploadedImage,
 } from "../core/types"
 
 export type ProcessingStatus = "idle" | "processing" | "complete" | "error"
 
 export type AppState = {
-  uploadedImage: UploadedImage | null
-  imageData: ImageData | null
+  originalImage: OriginalImageMetadata | null
+  scaledImageData: ImageData | null
   settings: ProcessingConfig
   gcodeSettings: GcodeSettings
   processingStatus: ProcessingStatus
@@ -21,8 +21,8 @@ export type AppState = {
 }
 
 export type AppActions = {
-  setUploadedImage: (image: UploadedImage | null) => void
-  setImageData: (data: ImageData | null) => void
+  setOriginalImage: (image: OriginalImageMetadata | null) => void
+  setScaledImageData: (data: ImageData | null) => void
   updateSettings: (partial: Partial<ProcessingConfig>) => void
   updateGcodeCommands: (partial: Partial<GcodeCommandSettings>) => void
   updateGcodeSheet: (partial: Partial<GcodeSheetSettings>) => void

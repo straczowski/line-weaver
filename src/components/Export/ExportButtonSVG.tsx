@@ -1,17 +1,17 @@
-import { useProcessingStatus, useSvgOutput, useUploadedImage } from "../../store/selectors"
+import { useOriginalImage, useProcessingStatus, useSvgOutput } from "../../store/selectors"
 import { downloadFile, extractFilenameWithoutExtension } from "./utils"
 
 export const ExportButtonSVG = () => {
   const svgOutput = useSvgOutput()
-  const uploadedImage = useUploadedImage()
+  const originalImage = useOriginalImage()
   const processingStatus = useProcessingStatus()
 
   const isDisabled = svgOutput === null || processingStatus === "processing"
 
   const handleDownload = () => {
-    if (!svgOutput || !uploadedImage) return
+    if (!svgOutput || !originalImage) return
 
-    const filename = extractFilenameWithoutExtension(uploadedImage.file.name)
+    const filename = extractFilenameWithoutExtension(originalImage.file.name)
     downloadFile({ content: svgOutput, filename: `${filename}.svg`, mimeType: "image/svg+xml" })
   }
 

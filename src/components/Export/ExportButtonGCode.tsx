@@ -1,25 +1,26 @@
 import { generateGcode } from "../../core/gcode/generate-gcode"
-import { useGcodeSettings, usePolylines, useProcessingStatus, useUploadedImage } from "../../store/selectors"
+import { useGcodeSettings, useOriginalImage, usePolylines, useScaledImageData, useProcessingStatus } from "../../store/selectors"
 import { downloadFile, extractFilenameWithoutExtension } from "./utils"
 
 export const ExportButtonGCode = () => {
   const polylines = usePolylines()
-  const uploadedImage = useUploadedImage()
+  const originalImage = useOriginalImage()
+  const scaledImageData = useScaledImageData()
   const processingStatus = useProcessingStatus()
   const gcodeSettings = useGcodeSettings()
 
   const isDisabled = !polylines || polylines.length === 0 || processingStatus === "processing"
 
   const handleExport = () => {
-    if (!polylines || !uploadedImage) return
+    if (!polylines || !originalImage || !scaledImageData) return
 
     const gcode = generateGcode({
       polylines,
-      dimensions: { width: uploadedImage.width, height: uploadedImage.height },
+      dimensions: { width: scaledImageData.width, height: scaledImageData.height },
       gcodeSettings,
     })
 
-    const filename = extractFilenameWithoutExtension(uploadedImage.file.name)
+    const filename = extractFilenameWithoutExtension(originalImage.file.name)
     downloadFile({ content: gcode, filename: `${filename}.gcode`, mimeType: "text/plain" })
   }
 

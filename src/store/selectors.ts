@@ -1,8 +1,8 @@
 import { useStore } from "./store"
 
-export const useUploadedImage = useStore.use.uploadedImage
+export const useOriginalImage = useStore.use.originalImage
 
-export const useImageData = useStore.use.imageData
+export const useScaledImageData = useStore.use.scaledImageData
 
 export const useSettings = useStore.use.settings
 

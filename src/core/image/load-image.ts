@@ -1,6 +1,6 @@
-import type { UploadedImage } from "../types.ts"
+import type { OriginalImageMetadata } from "../types.ts"
 
-export const loadImage = (file: File): Promise<UploadedImage> => {
+export const loadImage = (file: File): Promise<OriginalImageMetadata> => {
   return readFileAsDataUrl(file).then((dataUrl) => loadImageElement({ file, dataUrl }))
 }
 
@@ -25,7 +25,7 @@ const readFileAsDataUrl = (file: File): Promise<string> => {
   })
 }
 
-const loadImageElement = ({ file, dataUrl }: { file: File; dataUrl: string }): Promise<UploadedImage> => {
+const loadImageElement = ({ file, dataUrl }: { file: File; dataUrl: string }): Promise<OriginalImageMetadata> => {
   return new Promise((resolve, reject) => {
     const image = new Image()
 

@@ -1,17 +1,17 @@
 import { useEffect, useRef, useState, useCallback } from "react"
-import { extractImageData } from "../core/image/extract-image-data"
+import { scaleImage } from "../core/image/scale-image"
 import { loadImage } from "../core/image/load-image"
 import { validateImageFile } from "../core/image/validate-image-file"
 import { useImageActions } from "../store/actions-hooks"
-import { useUploadedImage } from "../store/selectors"
+import { useOriginalImage } from "../store/selectors"
 
 export const useFileUpload = () => {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   
-  const uploadedImage = useUploadedImage()
-  const { setUploadedImage, setImageData } = useImageActions()
+  const originalImage = useOriginalImage()
+  const { setOriginalImage, setScaledImageData } = useImageActions()
 
   useEffect(() => {
     if (!error) return
@@ -31,17 +31,17 @@ export const useFileUpload = () => {
       setIsLoading(true)
       try {
         const image = await loadImage(file)
-        setUploadedImage(image)
+        setOriginalImage(image)
         setIsLoading(false)
-        const imageData = await extractImageData(image)
-        setImageData(imageData)
+        const scaledImageData = await scaleImage(image)
+        setScaledImageData(scaledImageData)
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to load image")
       } finally {
         setIsLoading(false)
       }
     },
-    [setUploadedImage, setImageData]
+    [setOriginalImage, setScaledImageData]
   )
 
   const openFilePicker = useCallback(() => {
@@ -59,7 +59,7 @@ export const useFileUpload = () => {
   return {
     isLoading,
     error,
-    uploadedImage,
+    originalImage,
     fileInputRef,
     processFile,
     openFilePicker,

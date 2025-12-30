@@ -1,6 +1,6 @@
 import type { OriginalImageMetadata } from "../types.ts"
 
-const MAX_DIMENSION = 1024
+const MAX_DIMENSION = 2000
 
 export const scaleImage = async (originalImage: OriginalImageMetadata): Promise<ImageData> => {
   const { scaledWidth, scaledHeight } = calculateScaledDimensions({

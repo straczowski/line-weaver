@@ -1,11 +1,11 @@
 import clsx from "clsx"
-import type { UploadedImage } from "../../core/types"
+import type { OriginalImageMetadata } from "../../core/types"
 import { useDropZone } from "../../hooks/use-drop-zone"
 import { useFileUpload } from "../../hooks/use-file-upload"
 import { LoadingIndicator } from "../LoadingIndicator/LoadingIndicator"
 
 export const ImageUploader = () => {
-  const { isLoading, error, uploadedImage, fileInputRef, processFile, openFilePicker, handleFileSelect } = useFileUpload()
+  const { isLoading, error, originalImage, fileInputRef, processFile, openFilePicker, handleFileSelect } = useFileUpload()
 
   const { isDragging, dropZoneProps } = useDropZone({
     onDrop: processFile,
@@ -21,8 +21,8 @@ export const ImageUploader = () => {
     if (isLoading) {
       return <LoadingIndicator message="Loading image..." size="sm" className="h-24 justify-center" />
     }
-    if (uploadedImage) {
-      return <ImagePreview image={uploadedImage} onChangeImage={handleChangeImage} />
+    if (originalImage) {
+      return <ImagePreview image={originalImage} onChangeImage={handleChangeImage} />
     }
     return <DropZone isDragging={isDragging} onClick={openFilePicker} />
   }
@@ -56,7 +56,7 @@ const DropZone = ({ isDragging, onClick }: { isDragging: boolean; onClick: () =>
   )
 }
 
-const ImagePreview = ({ image, onChangeImage }: { image: UploadedImage; onChangeImage: (event: React.MouseEvent) => void }) => {
+const ImagePreview = ({ image, onChangeImage }: { image: OriginalImageMetadata; onChangeImage: (event: React.MouseEvent) => void }) => {
   return (
     <div className="flex items-center gap-4 p-4">
       <img src={image.dataUrl} alt="Uploaded preview" className="h-24 w-24 rounded-lg object-cover" />

@@ -10,18 +10,18 @@ import { PreviewPanel } from "./components/Preview/PreviewPanel"
 import { VectorizedImage } from "./components/Preview/VectorizedImage"
 import { useDebouncedSettings } from "./hooks/use-debounced-settings"
 import { useVectorize } from "./hooks/use-vectorize"
-import { useImageData } from "./store/selectors"
+import { useScaledImageData } from "./store/selectors"
 
 export const App = () => {
-  const imageData = useImageData()
+  const scaledImageData = useScaledImageData()
   const debouncedSettings = useDebouncedSettings(250)
   const { vectorize } = useVectorize()
 
   useEffect(() => {
-    if (imageData) {
+    if (scaledImageData) {
       vectorize()
     }
-  }, [imageData, debouncedSettings, vectorize])
+  }, [scaledImageData, debouncedSettings, vectorize])
 
   return (
     <div className="min-h-screen bg-background font-sans text-text">

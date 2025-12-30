@@ -54,7 +54,7 @@ describe("loadImage", () => {
     globalThis.Image = originalImage
   })
 
-  it("should load PNG image and return UploadedImage", async () => {
+  it("should load PNG image and return OriginalImageMetadata", async () => {
     const mockDataUrl = "data:image/png;base64,abc123"
     globalThis.FileReader = createMockFileReader(mockDataUrl) as unknown as typeof FileReader
     globalThis.Image = createMockImage(100, 200) as unknown as typeof Image
@@ -69,7 +69,7 @@ describe("loadImage", () => {
     assert.strictEqual(result.height, 200)
   })
 
-  it("should load JPG image and return UploadedImage", async () => {
+  it("should load JPG image and return OriginalImageMetadata", async () => {
     const mockDataUrl = "data:image/jpeg;base64,xyz789"
     globalThis.FileReader = createMockFileReader(mockDataUrl) as unknown as typeof FileReader
     globalThis.Image = createMockImage(800, 600) as unknown as typeof Image

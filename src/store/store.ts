@@ -8,8 +8,8 @@ export const useStore = createSelectors(createStore())
 
 function createStore() {
   const initialState = {
-    uploadedImage: null,
-    imageData: null,
+    originalImage: null,
+    scaledImageData: null,
     settings: DEFAULT_SETTINGS,
     gcodeSettings: DEFAULT_GCODE_SETTINGS,
     processingStatus: "idle" as ProcessingStatus,
@@ -23,9 +23,9 @@ function createStore() {
       (set) => ({
         ...initialState,
 
-        setUploadedImage: (image) => set({ uploadedImage: image }, undefined, "setUploadedImage"),
+        setOriginalImage: (image) => set({ originalImage: image }, undefined, "setOriginalImage"),
 
-        setImageData: (data) => set({ imageData: data }, undefined, "setImageData"),
+        setScaledImageData: (data) => set({ scaledImageData: data }, undefined, "setScaledImageData"),
 
         updateSettings: (partial) =>
           set(

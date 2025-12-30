@@ -4,16 +4,16 @@ import { generateSvg } from "../core/svg/generate-svg"
 import { vectorizeImage } from "../core/vectorize-image"
 import { useStore } from "../store/store"
 import { useOutputActions, useProcessingActions } from "../store/actions-hooks"
-import { useImageData, useUploadedImage } from "../store/selectors"
+import { useOriginalImage, useScaledImageData } from "../store/selectors"
 
 export const useVectorize = () => {
-  const imageData = useImageData()
-  const uploadedImage = useUploadedImage()
+  const scaledImageData = useScaledImageData()
+  const originalImage = useOriginalImage()
   const { setProcessingStatus, setProcessingError } = useProcessingActions()
   const { setPolylines, setSvgOutput } = useOutputActions()
 
   const vectorize = useCallback(async () => {
-    if (!imageData || !uploadedImage) return
+    if (!scaledImageData || !originalImage) return
 
     const settings = useStore.getState().settings
 
@@ -23,12 +23,12 @@ export const useVectorize = () => {
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     try {
-      const result = vectorizeImage({ imageData, settings })
+      const result = vectorizeImage({ imageData: scaledImageData, settings })
       setPolylines(result.polylines)
 
       const svg = generateSvg({
         polylines: result.polylines,
-        dimensions: { width: uploadedImage.width, height: uploadedImage.height },
+        dimensions: { width: scaledImageData.width, height: scaledImageData.height },
         strokeConfig: createStrokeConfig(settings),
       })
       setSvgOutput(svg)
@@ -39,7 +39,7 @@ export const useVectorize = () => {
       setProcessingError(message)
       setProcessingStatus("error")
     }
-  }, [imageData, uploadedImage, setProcessingStatus, setProcessingError, setPolylines, setSvgOutput])
+  }, [scaledImageData, originalImage, setProcessingStatus, setProcessingError, setPolylines, setSvgOutput])
 
   return { vectorize }
 }

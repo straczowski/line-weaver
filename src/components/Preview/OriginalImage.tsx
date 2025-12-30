@@ -1,13 +1,13 @@
-import { useUploadedImage } from "../../store/selectors"
+import { useOriginalImage } from "../../store/selectors"
 
 export const OriginalImage = () => {
-  const uploadedImage = useUploadedImage()
+  const originalImage = useOriginalImage()
 
-  if (!uploadedImage) {
+  if (!originalImage) {
     return <Placeholder />
   }
 
-  return <img src={uploadedImage.dataUrl} alt="Uploaded image preview" className="max-h-full max-w-full object-contain" />
+  return <img src={originalImage.dataUrl} alt="Uploaded image preview" className="max-h-full max-w-full object-contain" />
 }
 
 const Placeholder = () => {
