@@ -69,7 +69,8 @@ describe("generateCrossHatch", () => {
     assert.equal(result90.length, 1)
     const line45 = result45[0]
     const line90 = result90[0]
-    assert.notEqual(line45[0].x, line90[0].x, "Rotated line should have different coordinates")
+    const samePoint = line45[0].x === line90[0].x && line45[0].y === line90[0].y
+    assert.ok(!samePoint, "Rotated line should have different coordinates")
   })
 
   it("should process multiple cells correctly", () => {

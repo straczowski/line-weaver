@@ -54,58 +54,70 @@ type GenerateCrossCellPolylinesInput = {
 
 const generateCrossCellPolylines = (params: GenerateCrossCellPolylinesInput): Polyline[] => {
   const { pattern, row, col, cellSize, angle } = params
-  const x = col * cellSize
-  const y = row * cellSize
+  const cellX = col * cellSize
+  const cellY = row * cellSize
 
   if (pattern === "empty") return []
   if (pattern === "diagonal") {
-    const diagonal = generateDiagonal(x, y, cellSize)
-    return angle === 45 ? [diagonal] : [rotatePolyline(diagonal, x, y, cellSize, angle)]
+    const segment = clipLineThroughCenterToCell(cellX, cellY, cellSize, angle - 90)
+    return segment ? [segment] : []
   }
 
-  const diagonal1 = generateDiagonal(x, y, cellSize)
-  const diagonal2 = generateDiagonalLeft(x, y, cellSize)
+  const primary = clipLineThroughCenterToCell(cellX, cellY, cellSize, angle - 90)
+  const secondary = clipLineThroughCenterToCell(cellX, cellY, cellSize, angle)
 
-  if (angle === 45) {
-    return [diagonal1, diagonal2]
-  }
-
-  return [
-    rotatePolyline(diagonal1, x, y, cellSize, angle),
-    rotatePolyline(diagonal2, x, y, cellSize, angle),
-  ]
+  const result: Polyline[] = []
+  if (primary) result.push(primary)
+  if (secondary) result.push(secondary)
+  return result
 }
 
-const generateDiagonal = (x: number, y: number, size: number): Polyline => [
-  createPoint(x, y + size),
-  createPoint(x + size, y),
-]
-
-const generateDiagonalLeft = (x: number, y: number, size: number): Polyline => [
-  createPoint(x, y),
-  createPoint(x + size, y + size),
-]
-
-const rotatePolyline = (polyline: Polyline, cellX: number, cellY: number, cellSize: number, angleDeg: number): Polyline => {
-  if (angleDeg === 45) return polyline
-
+const clipLineThroughCenterToCell = (
+  cellX: number,
+  cellY: number,
+  cellSize: number,
+  angleDeg: number,
+): Polyline | null => {
   const centerX = cellX + cellSize / 2
   const centerY = cellY + cellSize / 2
   const angleRad = (angleDeg * Math.PI) / 180
-
-  return polyline.map((point) => rotatePoint(point, centerX, centerY, angleRad))
-}
-
-const rotatePoint = (point: Point, centerX: number, centerY: number, angleRad: number): Point => {
-  const dx = point.x - centerX
-  const dy = point.y - centerY
   const cos = Math.cos(angleRad)
   const sin = Math.sin(angleRad)
 
-  return {
-    x: centerX + dx * cos - dy * sin,
-    y: centerY + dx * sin + dy * cos,
+  const ts: number[] = []
+
+  if (Math.abs(cos) > 1e-10) {
+    const tLeft = (cellX - centerX) / cos
+    const yLeft = centerY + tLeft * sin
+    if (cellY <= yLeft && yLeft <= cellY + cellSize) ts.push(tLeft)
+    const tRight = (cellX + cellSize - centerX) / cos
+    const yRight = centerY + tRight * sin
+    if (cellY <= yRight && yRight <= cellY + cellSize) ts.push(tRight)
   }
+
+  if (Math.abs(sin) > 1e-10) {
+    const tBottom = (cellY - centerY) / sin
+    const xBottom = centerX + tBottom * cos
+    if (cellX <= xBottom && xBottom <= cellX + cellSize) ts.push(tBottom)
+    const tTop = (cellY + cellSize - centerY) / sin
+    const xTop = centerX + tTop * cos
+    if (cellX <= xTop && xTop <= cellX + cellSize) ts.push(tTop)
+  }
+
+  if (ts.length < 2) return null
+
+  const tMin = Math.min(...ts)
+  const tMax = Math.max(...ts)
+
+  return [
+    createPoint(roundToDigits(centerX + tMin * cos, 10), roundToDigits(centerY + tMin * sin, 10)),
+    createPoint(roundToDigits(centerX + tMax * cos, 10), roundToDigits(centerY + tMax * sin, 10)),
+  ]
+}
+
+const roundToDigits = (value: number, digits: number): number => {
+  const scale = 10 ** digits
+  return Math.round(value * scale) / scale
 }
 
 const createPoint = (x: number, y: number): Point => ({ x, y })

@@ -105,7 +105,7 @@ export const ControlPanel = () => {
               value={settings.hatchAngle}
               min={0}
               max={180}
-              step={15}
+              step={5}
               unit="°"
               onChange={(value) => updateSettings({ hatchAngle: value })}
               disabled={!settings.enableHatching}
@@ -129,7 +129,7 @@ export const ControlPanel = () => {
             value={settings.hatchAngle}
             min={0}
             max={180}
-            step={15}
+            step={5}
             unit="°"
             onChange={(value) => updateSettings({ hatchAngle: value })}
             disabled={!settings.enableHatching}
