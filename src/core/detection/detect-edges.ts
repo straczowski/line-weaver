@@ -1,5 +1,11 @@
 import type { GrayscaleData } from "../types.ts"
 
+const ANGLE_HORIZONTAL = 22.5
+const ANGLE_DIAGONAL_1 = 67.5
+const ANGLE_VERTICAL = 112.5
+const ANGLE_DIAGONAL_2 = 157.5
+const WEAK_EDGE = 128
+
 type DetectEdgesInput = {
   grayscaleData: GrayscaleData
   lowThreshold?: number
@@ -17,7 +23,13 @@ export const detectEdges = (input: DetectEdgesInput): EdgeData => {
 
   const gradients = computeGradients(grayscaleData)
   const suppressed = applyNonMaxSuppression(gradients)
-  const edges = applyHysteresisThreshold({ suppressed, lowThreshold, highThreshold })
+  const edges = applyHysteresisThreshold({
+    suppressed,
+    lowThreshold,
+    highThreshold,
+    width: grayscaleData.width,
+    height: grayscaleData.height,
+  })
 
   return {
     width: grayscaleData.width,
@@ -102,19 +114,19 @@ const normalizeAngle = (angle: number): number => {
 }
 
 const getNeighborIndices = (x: number, y: number, width: number, angle: number): { neighbor1: number; neighbor2: number } => {
-  if (angle < 22.5 || angle >= 157.5) {
+  if (angle < ANGLE_HORIZONTAL || angle >= ANGLE_DIAGONAL_2) {
     return {
       neighbor1: y * width + (x - 1),
       neighbor2: y * width + (x + 1),
     }
   }
-  if (angle < 67.5) {
+  if (angle < ANGLE_DIAGONAL_1) {
     return {
       neighbor1: (y - 1) * width + (x + 1),
       neighbor2: (y + 1) * width + (x - 1),
     }
   }
-  if (angle < 112.5) {
+  if (angle < ANGLE_VERTICAL) {
     return {
       neighbor1: (y - 1) * width + x,
       neighbor2: (y + 1) * width + x,
@@ -126,20 +138,25 @@ const getNeighborIndices = (x: number, y: number, width: number, angle: number):
   }
 }
 
-const applyHysteresisThreshold = (params: { suppressed: Float32Array; lowThreshold: number; highThreshold: number }): Uint8Array => {
-  const { suppressed, lowThreshold, highThreshold } = params
-  const length = suppressed.length
-  const edges = new Uint8Array(length)
+const applyHysteresisThreshold = (params: {
+  suppressed: Float32Array
+  lowThreshold: number
+  highThreshold: number
+  width: number
+  height: number
+}): Uint8Array => {
+  const { suppressed, lowThreshold, highThreshold, width, height } = params
+  const edges = new Uint8Array(width * height)
 
-  for (let i = 0; i < length; i++) {
+  for (let i = 0; i < edges.length; i++) {
     if (suppressed[i] >= highThreshold) {
       edges[i] = 255
     } else if (suppressed[i] >= lowThreshold) {
-      edges[i] = 128
+      edges[i] = WEAK_EDGE
     }
   }
 
-  return connectWeakEdges(edges, Math.round(Math.sqrt(length)))
+  return connectWeakEdges(edges, width)
 }
 
 const connectWeakEdges = (edges: Uint8Array, width: number): Uint8Array => {
@@ -152,7 +169,7 @@ const connectWeakEdges = (edges: Uint8Array, width: number): Uint8Array => {
     for (let y = 1; y < height - 1; y++) {
       for (let x = 1; x < width - 1; x++) {
         const index = y * width + x
-        if (result[index] === 128 && hasStrongNeighbor(result, x, y, width)) {
+        if (result[index] === WEAK_EDGE && hasStrongNeighbor(result, x, y, width)) {
           result[index] = 255
           changed = true
         }
@@ -161,7 +178,7 @@ const connectWeakEdges = (edges: Uint8Array, width: number): Uint8Array => {
   }
 
   for (let i = 0; i < result.length; i++) {
-    if (result[i] === 128) result[i] = 0
+    if (result[i] === WEAK_EDGE) result[i] = 0
   }
 
   return result
