@@ -98,5 +98,7 @@ const generateHatching = (brightnessGrid: BrightnessGrid, settings: ProcessingCo
         maxDensity: settings.hatchDensity,
         threshold: settings.threshold,
       })
+    default:
+      throw new Error(`Unknown hatching mode: ${settings.hatchingMode}`)
   }
 }
