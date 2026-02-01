@@ -33,13 +33,13 @@ This phase focuses on building a complete image input pipeline:
 
 **Tasks**:
 
-- [ ] Add `UploadedImage` type containing:
+- [ ] Add `OriginalImageMetadata` type containing:
   - `file: File` - Original file reference
   - `dataUrl: string` - Base64 data URL for preview
   - `width: number` - Image width in pixels
   - `height: number` - Image height in pixels
 - [ ] Add `ImageUploaderProps` type with callback:
-  - `onImageUpload: (image: UploadedImage) => void`
+  - `onImageUpload: (image: OriginalImageMetadata) => void`
 
 **Acceptance Criteria**:
 
@@ -58,7 +58,7 @@ This phase focuses on building a complete image input pipeline:
 
 - [ ] Create `validateImageFile` function that receives a `File`
 - [ ] Validate file type is `image/png` or `image/jpeg`
-- [ ] Validate file size is under 5MB (5 * 1024 * 1024 bytes)
+- [ ] Validate file size is under 20MB (20 * 1024 * 1024 bytes)
 - [ ] Return validation result object with `isValid: boolean` and `error?: string`
 - [ ] Define Zod schema for validation result
 
@@ -88,42 +88,43 @@ This phase focuses on building a complete image input pipeline:
 - [ ] Create `loadImage` function that receives a `File`
 - [ ] Convert File to data URL using `FileReader`
 - [ ] Load data URL into `HTMLImageElement`
-- [ ] Return Promise resolving to `UploadedImage` type
+- [ ] Return Promise resolving to `OriginalImageMetadata` type
 - [ ] Handle loading errors with descriptive messages
 
 **Implementation Notes**:
 
 - Use Promise-based approach wrapping FileReader and Image.onload
 - Fail early if FileReader encounters error
-- Return happy path (UploadedImage) at the end
+- Return happy path (OriginalImageMetadata) at the end
 
 **Acceptance Criteria**:
 
-- Function returns Promise that resolves to `UploadedImage`
+- Function returns Promise that resolves to `OriginalImageMetadata`
 - Errors are caught and re-thrown with clear messages
 - Works with both PNG and JPG files
 
 ---
 
-### Step 4: Create Canvas Pixel Extraction Utility
+### Step 4: Create Scale Image and Extract ImageData Utility
 
-**File**: `src/core/extract-image-data.ts`
+**File**: `src/core/image/scale-image.ts`
 
-**Goal**: Extract raw pixel data from an image for processing pipeline.
+**Goal**: Scale image to a maximum dimension (for performance) and extract raw pixel data for the processing pipeline.
 
 **Tasks**:
 
-- [ ] Create `extractImageData` function that receives `UploadedImage`
-- [ ] Create off-screen canvas with image dimensions
-- [ ] Draw image onto canvas
-- [ ] Extract ImageData using `getImageData()`
-- [ ] Return the canvas ImageData object
+- [ ] Create `scaleImage` function that receives `OriginalImageMetadata` (from loadImage)
+- [ ] Calculate scaled dimensions (cap at MAX_DIMENSION, e.g. 2000px) preserving aspect ratio
+- [ ] Create off-screen canvas with scaled dimensions
+- [ ] Draw image onto canvas and extract ImageData using `getImageData()`
+- [ ] Return the canvas ImageData object (Promise, since image load is async)
 
 **Implementation Notes**:
 
 - Canvas is created dynamically (not attached to DOM)
-- Consider maximum dimension scaling (cap at 2000px) for performance
+- Maximum dimension scaling (e.g. 2000px) for performance
 - Use `document.createElement('canvas')` for off-screen canvas
+- Called from `use-file-upload` after `loadImage`; result is stored as scaledImageData in the store
 
 **Acceptance Criteria**:
 
@@ -204,7 +205,7 @@ This phase focuses on building a complete image input pipeline:
 
 **Tasks**:
 
-- [ ] Track `uploadedImage` state (UploadedImage | null)
+- [ ] Track `uploadedImage` state (OriginalImageMetadata | null)
 - [ ] After successful upload, store image in state
 - [ ] Render thumbnail when image is present
 - [ ] Add "Remove" or "Change" button to clear/replace image
@@ -238,7 +239,7 @@ This phase focuses on building a complete image input pipeline:
 
 **Tasks**:
 
-- [ ] Add `uploadedImage` state using `useState<UploadedImage | null>(null)`
+- [ ] Add `uploadedImage` state (or use store: originalImage in Zustand store)
 - [ ] Create `handleImageUpload` callback function
 - [ ] Pass callback to `<ImageUploader onImageUpload={handleImageUpload} />`
 - [ ] Pass `uploadedImage` to `<PreviewCanvas />` for original image display
@@ -246,8 +247,8 @@ This phase focuses on building a complete image input pipeline:
 **State Flow**:
 
 ```
-ImageUploader → App (state) → PreviewCanvas (original)
-                           → PreviewCanvas (vectorized - Phase 3+)
+ImageUploader → Store (originalImage) → OriginalImage (preview)
+                                      → use-file-upload → scaleImage → scaledImageData → vectorize
 ```
 
 **Acceptance Criteria**:
@@ -258,19 +259,20 @@ ImageUploader → App (state) → PreviewCanvas (original)
 
 ---
 
-### Step 9: Display Original Image in PreviewCanvas
+### Step 9: Display Original Image in Preview
 
-**File**: `src/components/PreviewCanvas/PreviewCanvas.tsx`
+**File**: `src/components/Preview/OriginalImage.tsx` (and `PreviewPanel.tsx`)
 
 **Goal**: Render the original uploaded image in the left preview pane.
 
 **Tasks**:
 
-- [ ] Accept `image?: UploadedImage` prop
+- [ ] Use store (e.g. `useOriginalImage`) to get uploaded image
 - [ ] Render image when provided using `<img>` element
-- [ ] Style image to fit within canvas bounds (contain, centered)
+- [ ] Style image to fit within panel bounds (contain, centered)
 - [ ] Show placeholder when no image is uploaded
 - [ ] Maintain aspect ratio of original image
+- [ ] `PreviewPanel` wraps content with title ("Original" / "Vectorized")
 
 **Visual States**:
 
@@ -349,8 +351,8 @@ ImageUploader → App (state) → PreviewCanvas (original)
 
 **Test Cases**:
 
-- [ ] Should load PNG image and return UploadedImage
-- [ ] Should load JPG image and return UploadedImage
+- [ ] Should load PNG image and return OriginalImageMetadata
+- [ ] Should load JPG image and return OriginalImageMetadata
 - [ ] Should extract correct dimensions from image
 - [ ] Should generate valid data URL
 - [ ] Should reject with error for corrupted file
@@ -359,7 +361,7 @@ ImageUploader → App (state) → PreviewCanvas (original)
 
 **Acceptance Criteria**:
 
-- Tests verify correct UploadedImage structure
+- Tests verify correct OriginalImageMetadata structure
 - Error handling is tested
 - Tests don't require real file system access
 
@@ -369,15 +371,16 @@ ImageUploader → App (state) → PreviewCanvas (original)
 
 | File                                    | Action | Purpose                          |
 | --------------------------------------- | ------ | -------------------------------- |
-| `src/core/types.ts`                     | Modify | Add UploadedImage type           |
-| `src/core/validate-image-file.ts`       | Create | File validation utility          |
-| `src/core/load-image.ts`                | Create | Image loading utility            |
-| `src/core/extract-image-data.ts`        | Create | Canvas pixel extraction          |
+| `src/core/types.ts`                     | Modify | Add OriginalImageMetadata type   |
+| `src/core/image/validate-image-file.ts`| Create | File validation utility          |
+| `src/core/image/load-image.ts`         | Create | Image loading utility            |
+| `src/core/image/scale-image.ts`        | Create | Scale image and extract ImageData |
 | `src/components/ImageUploader/ImageUploader.tsx` | Modify | Full implementation     |
-| `src/components/PreviewCanvas/PreviewCanvas.tsx` | Modify | Display original image  |
+| `src/components/Preview/OriginalImage.tsx`       | Modify | Display original image  |
+| `src/components/Preview/PreviewPanel.tsx`        | Modify | Panel wrapper with title |
 | `src/App.tsx`                           | Modify | Lift state, wire components      |
-| `src/core/validate-image-file.test.ts`  | Create | Validation tests                 |
-| `src/core/load-image.test.ts`           | Create | Loader tests                     |
+| `src/core/image/validate-image-file.test.ts` | Create | Validation tests         |
+| `src/core/image/load-image.test.ts`         | Create | Loader tests             |
 
 ---
 
@@ -398,7 +401,7 @@ Step 5 (Drop Zone UI) ──→ Step 6 (Upload Flow)
                                       ↓
                           Step 8 (Lift State to App)
                                       ↓
-                          Step 9 (PreviewCanvas Display)
+                          Step 9 (Preview Display)
                                       ↓
                           Step 10 (Loading State)
                                       ↓
@@ -412,7 +415,7 @@ Step 5 (Drop Zone UI) ──→ Step 6 (Upload Flow)
 - [ ] User can upload PNG/JPG images via drag-and-drop
 - [ ] User can upload images via file picker (click to upload)
 - [ ] Invalid files show clear error messages
-- [ ] Files over 5MB are rejected with error
+- [ ] Files over 20MB are rejected with error
 - [ ] Uploaded image thumbnail appears in uploader
 - [ ] Original image appears in left preview canvas
 - [ ] Image dimensions and size are displayed
@@ -422,4 +425,4 @@ Step 5 (Drop Zone UI) ──→ Step 6 (Upload Flow)
 
 ---
 
-_Created: December 10, 2025_
+_Created: December 10, 2025. Updated: February 2026 (scale-image, Preview/OriginalImage, 20MB, store flow)._

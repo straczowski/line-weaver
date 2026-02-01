@@ -1,5 +1,7 @@
 # Phase 8: Extend Hatch Option
 
+> **Status**: Implemented. Three hatching modes (Sketch, Cross, Grid) are available; cross uses 3-threshold, grid uses 5-level patterns.
+
 > Reintroduce the simple 3-threshold hatch algorithm (Nothing → "/" → "X") and rename current "cross" mode to "grid".
 
 ---
