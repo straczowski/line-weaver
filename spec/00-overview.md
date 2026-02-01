@@ -22,6 +22,8 @@ This is the **master plan**. Detailed implementation specs are added incremental
 | 05.01 | `05.01-optimize-gcode-output.md` | ✅ Complete |
 | 06    | `06-advanced-processing.md`      | ✅ Complete |
 | 06.01 | `06.01-filter-small-polylines.md`| ✅ Complete |
+| 07    | `07-new-structure-of-core.md`     | ✅ Complete |
+| 08    | `08-extend-hatch-option.md`       | 🔲 Pending  |
 
 > 💡 Each spec is created just-in-time before implementation begins for that phase.
 

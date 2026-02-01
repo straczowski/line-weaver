@@ -1,3 +1,4 @@
+import { HATCHING_MODE } from "../../core/types"
 import { useSettingsActions } from "../../store/actions-hooks"
 import { useSettings } from "../../store/selectors"
 import { ModeSelector } from "./ModeSelector"
@@ -81,7 +82,7 @@ export const ControlPanel = () => {
         />
         <ModeSelector
           label="Mode"
-          tooltip="Sketch uses angled lines with variable density. Cross uses grid patterns optimized for pen plotters."
+          tooltip="Sketch: Variable-density angled lines. Cross: Simple 3-level pattern (nothing → diagonal → cross). Grid: 5-level grid patterns optimized for pen plotters."
           value={settings.hatchingMode}
           onChange={(mode) => updateSettings({ hatchingMode: mode })}
           disabled={!settings.enableHatching}
@@ -96,7 +97,7 @@ export const ControlPanel = () => {
           onChange={(value) => updateSettings({ threshold: value })}
           disabled={!settings.enableHatching}
         />
-        {settings.hatchingMode === "sketch" && (
+        {settings.hatchingMode === HATCHING_MODE.SKETCH && (
           <>
             <SliderControl
               label="Angle"
@@ -104,7 +105,7 @@ export const ControlPanel = () => {
               value={settings.hatchAngle}
               min={0}
               max={180}
-              step={15}
+              step={5}
               unit="°"
               onChange={(value) => updateSettings({ hatchAngle: value })}
               disabled={!settings.enableHatching}
@@ -120,6 +121,19 @@ export const ControlPanel = () => {
               disabled={!settings.enableHatching}
             />
           </>
+        )}
+        {settings.hatchingMode === HATCHING_MODE.CROSS && (
+          <SliderControl
+            label="Angle"
+            tooltip="Direction of diagonal lines in degrees. 45° is standard, 0° is horizontal."
+            value={settings.hatchAngle}
+            min={0}
+            max={180}
+            step={5}
+            unit="°"
+            onChange={(value) => updateSettings({ hatchAngle: value })}
+            disabled={!settings.enableHatching}
+          />
         )}
       </ControlSection>
 

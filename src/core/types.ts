@@ -51,7 +51,13 @@ export type BrightnessGrid = {
 
 export type LinePattern = "empty" | "horizontal" | "grid" | "grid-diagonal" | "grid-cross"
 
-export type HatchingMode = "sketch" | "cross"
+export const HATCHING_MODE = {
+  SKETCH: "sketch",
+  CROSS: "cross",
+  GRID: "grid",
+} as const
+
+export type HatchingMode = (typeof HATCHING_MODE)[keyof typeof HATCHING_MODE]
 
 export type VectorizeImageInput = {
   imageData: ImageData

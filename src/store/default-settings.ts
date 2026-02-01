@@ -1,3 +1,4 @@
+import { HATCHING_MODE } from "../core/types"
 import type { GcodeSettings, ProcessingConfig } from "../core/types"
 
 export const DEFAULT_SETTINGS: ProcessingConfig = {
@@ -13,7 +14,7 @@ export const DEFAULT_SETTINGS: ProcessingConfig = {
   edgeHighThreshold: 150,
   hatchAngle: 45,
   hatchDensity: 4,
-  hatchingMode: "sketch",
+  hatchingMode: HATCHING_MODE.SKETCH,
   minLineLength: 0,
 }
 

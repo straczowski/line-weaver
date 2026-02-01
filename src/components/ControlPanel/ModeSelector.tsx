@@ -1,4 +1,5 @@
 import { Tooltip } from "./Tooltip"
+import { HATCHING_MODE } from "../../core/types"
 import type { HatchingMode } from "../../core/types"
 
 type ModeSelectorProps = {
@@ -18,13 +19,19 @@ export const ModeSelector = ({ label, tooltip, value, onChange, disabled = false
       </span>
       <div className="flex gap-1 rounded-lg bg-background p-1">
         <ModeButton
-          mode="sketch"
+          mode={HATCHING_MODE.SKETCH}
           currentMode={value}
           onClick={onChange}
           disabled={disabled}
         />
         <ModeButton
-          mode="cross"
+          mode={HATCHING_MODE.CROSS}
+          currentMode={value}
+          onClick={onChange}
+          disabled={disabled}
+        />
+        <ModeButton
+          mode={HATCHING_MODE.GRID}
           currentMode={value}
           onClick={onChange}
           disabled={disabled}
@@ -41,9 +48,15 @@ type ModeButtonProps = {
   disabled?: boolean
 }
 
+const getLabel = (mode: HatchingMode): string => {
+  if (mode === HATCHING_MODE.SKETCH) return "Sketch"
+  if (mode === HATCHING_MODE.CROSS) return "Cross"
+  return "Grid"
+}
+
 const ModeButton = ({ mode, currentMode, onClick, disabled }: ModeButtonProps) => {
   const isActive = mode === currentMode
-  const label = mode === "sketch" ? "Sketch" : "Cross"
+  const label = getLabel(mode)
 
   return (
     <button

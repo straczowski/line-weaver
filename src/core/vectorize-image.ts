@@ -5,10 +5,12 @@ import { convertToGrayscale } from "./image/convert-to-grayscale.ts"
 import { detectEdges } from "./detection/detect-edges.ts"
 import { filterSmallPolylines } from "./polyline/filter-small-polylines.ts"
 import { generateAdvancedHatching } from "./hatching/generate-advanced-hatching.ts"
+import { generateCrossHatch } from "./hatching/generate-cross-hatch.ts"
 import { generateLinePatterns } from "./hatching/generate-line-patterns.ts"
 import { sampleBrightness } from "./detection/sample-brightness.ts"
 import { simplifyPolyline, mapSimplifyLevelToEpsilon } from "./polyline/simplify-polyline.ts"
 import { traceContours } from "./detection/trace-contours.ts"
+import { HATCHING_MODE } from "./types.ts"
 import type { BrightnessGrid, GrayscaleData, Polyline, ProcessingConfig, VectorizeImageInput, VectorizeImageOutput } from "./types.ts"
 
 export const vectorizeImage = (input: VectorizeImageInput): VectorizeImageOutput => {
@@ -77,17 +79,24 @@ const filterSmallPolylinesIfNeeded = (polylines: Polyline[], minLength: number):
 }
 
 const generateHatching = (brightnessGrid: BrightnessGrid, settings: ProcessingConfig): Polyline[] => {
-  if (settings.hatchingMode === "cross") {
-    return generateLinePatterns({
-      brightnessGrid,
-      threshold: settings.threshold,
-    })
+  switch (settings.hatchingMode) {
+    case HATCHING_MODE.CROSS:
+      return generateCrossHatch({
+        brightnessGrid,
+        threshold: settings.threshold,
+        angle: settings.hatchAngle,
+      })
+    case HATCHING_MODE.GRID:
+      return generateLinePatterns({
+        brightnessGrid,
+        threshold: settings.threshold,
+      })
+    case HATCHING_MODE.SKETCH:
+      return generateAdvancedHatching({
+        brightnessGrid,
+        hatchAngle: settings.hatchAngle,
+        maxDensity: settings.hatchDensity,
+        threshold: settings.threshold,
+      })
   }
-
-  return generateAdvancedHatching({
-    brightnessGrid,
-    hatchAngle: settings.hatchAngle,
-    maxDensity: settings.hatchDensity,
-    threshold: settings.threshold,
-  })
 }

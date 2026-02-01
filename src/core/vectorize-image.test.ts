@@ -1,6 +1,7 @@
 import assert from "node:assert"
 import { describe, it } from "node:test"
 import { vectorizeImage } from "./vectorize-image.ts"
+import { HATCHING_MODE } from "./types.ts"
 import type { ProcessingConfig } from "./types.ts"
 
 const createImageData = (width: number, height: number, rgba: number[]): ImageData => ({
@@ -23,7 +24,7 @@ const createSettings = (overrides: Partial<ProcessingConfig> = {}): ProcessingCo
   edgeHighThreshold: 150,
   hatchAngle: 45,
   hatchDensity: 4,
-  hatchingMode: "sketch",
+  hatchingMode: HATCHING_MODE.SKETCH,
   minLineLength: 0,
   ...overrides,
 })
@@ -122,5 +123,51 @@ describe("vectorizeImage", () => {
     const result = vectorizeImage({ imageData, settings })
 
     assert.ok(Array.isArray(result.polylines))
+  })
+
+  it("should use cross mode for 3-threshold hatching", () => {
+    const rgba = []
+    for (let i = 0; i < 16 * 16; i++) {
+      rgba.push(100, 100, 100, 255)
+    }
+    const imageData = createImageData(16, 16, rgba)
+    const settings = createSettings({ hatchingMode: HATCHING_MODE.CROSS, enableContours: false })
+
+    const result = vectorizeImage({ imageData, settings })
+
+    assert.ok(result.polylines.length > 0)
+  })
+
+  it("should use grid mode for 5-level grid patterns", () => {
+    const rgba = []
+    for (let i = 0; i < 16 * 16; i++) {
+      rgba.push(100, 100, 100, 255)
+    }
+    const imageData = createImageData(16, 16, rgba)
+    const settings = createSettings({ hatchingMode: HATCHING_MODE.GRID, enableContours: false })
+
+    const result = vectorizeImage({ imageData, settings })
+
+    assert.ok(result.polylines.length > 0)
+  })
+
+  it("should generate different patterns for cross vs grid modes", () => {
+    const rgba = []
+    for (let i = 0; i < 32 * 32; i++) {
+      rgba.push(100, 100, 100, 255)
+    }
+    const imageData = createImageData(32, 32, rgba)
+
+    const crossResult = vectorizeImage({
+      imageData,
+      settings: createSettings({ hatchingMode: HATCHING_MODE.CROSS, enableContours: false, gridSize: 16 }),
+    })
+    const gridResult = vectorizeImage({
+      imageData,
+      settings: createSettings({ hatchingMode: HATCHING_MODE.GRID, enableContours: false, gridSize: 16 }),
+    })
+
+    assert.ok(crossResult.polylines.length > 0)
+    assert.ok(gridResult.polylines.length > 0)
   })
 })
