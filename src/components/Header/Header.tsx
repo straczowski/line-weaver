@@ -15,6 +15,9 @@ export const Header = () => {
           <Link to="/tutorial" className="text-text-muted transition-colors hover:text-text">
             Tutorial
           </Link>
+          <Link to="/setup" className="text-text-muted transition-colors hover:text-text">
+            Setup
+          </Link>
         </nav>
       </div>
     </header>
