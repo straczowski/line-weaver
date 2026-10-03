@@ -1,5 +1,7 @@
 import type { Point, Polyline } from "../types.ts"
 
+const DEFAULT_EPSILON = 1.0
+
 type SimplifyPolylineInput = {
   polyline: Polyline
   epsilon: number
@@ -64,13 +66,13 @@ const perpendicularDistance = (point: Point, lineStart: Point, lineEnd: Point): 
   return Math.sqrt(Math.pow(point.x - projectionX, 2) + Math.pow(point.y - projectionY, 2))
 }
 
-export const mapSimplifyLevelToEpsilon = (level: number): number => {
-  const epsilonMap: Record<number, number> = {
-    1: 0.5,
-    2: 1.0,
-    3: 2.0,
-    4: 4.0,
-    5: 8.0,
-  }
-  return epsilonMap[level] ?? 1.0
+const SIMPLIFY_LEVEL_EPSILON: Record<number, number> = {
+  1: 0.5,
+  2: 1.0,
+  3: 2.0,
+  4: 4.0,
+  5: 8.0,
 }
+
+export const mapSimplifyLevelToEpsilon = (level: number): number =>
+  SIMPLIFY_LEVEL_EPSILON[level] ?? DEFAULT_EPSILON

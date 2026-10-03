@@ -1,4 +1,6 @@
-# Proposed new structure of `core` folder
+# Structure of `core` folder
+
+> Synced with codebase as of February 2026.
 
 ```
 src/core/
@@ -11,7 +13,7 @@ src/core/
 │   ├── load-image.test.ts
 │   ├── validate-image-file.ts
 │   ├── validate-image-file.test.ts
-│   ├── extract-image-data.ts
+│   ├── scale-image.ts                # Scale image to max dimension, return ImageData
 │   ├── convert-to-grayscale.ts
 │   ├── convert-to-grayscale.test.ts
 │   ├── apply-gaussian-blur.ts
@@ -26,8 +28,12 @@ src/core/
 │   └── sample-brightness.test.ts
 │
 ├── hatching/                         # Pattern generation
+│   ├── apply-brightness-threshold.ts
+│   ├── apply-brightness-threshold.test.ts
 │   ├── generate-line-patterns.ts
 │   ├── generate-line-patterns.test.ts
+│   ├── generate-cross-hatch.ts
+│   ├── generate-cross-hatch.test.ts
 │   ├── generate-advanced-hatching.ts
 │   ├── generate-advanced-hatching.test.ts
 │   ├── generate-perlin-noise.ts

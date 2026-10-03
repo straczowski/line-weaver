@@ -1,4 +1,10 @@
+import { applyBrightnessThreshold } from "./apply-brightness-threshold.ts"
 import type { BrightnessGrid, LinePattern, Point, Polyline } from "../types.ts"
+
+const BRIGHTNESS_EMPTY = 204
+const BRIGHTNESS_HORIZONTAL = 153
+const BRIGHTNESS_GRID = 102
+const BRIGHTNESS_GRID_DIAGONAL = 51
 
 export const generateLinePatterns = (params: { brightnessGrid: BrightnessGrid; threshold: number }): Polyline[] => {
   const { brightnessGrid, threshold } = params
@@ -22,18 +28,13 @@ export const generateLinePatterns = (params: { brightnessGrid: BrightnessGrid; t
 }
 
 const determinePattern = (brightness: number, threshold: number): LinePattern => {
-  const adjustedBrightness = applyThreshold(brightness, threshold)
+  const adjustedBrightness = applyBrightnessThreshold(brightness, threshold)
 
-  if (adjustedBrightness >= 204) return "empty"
-  if (adjustedBrightness >= 153) return "horizontal"
-  if (adjustedBrightness >= 102) return "grid"
-  if (adjustedBrightness >= 51) return "grid-diagonal"
+  if (adjustedBrightness >= BRIGHTNESS_EMPTY) return "empty"
+  if (adjustedBrightness >= BRIGHTNESS_HORIZONTAL) return "horizontal"
+  if (adjustedBrightness >= BRIGHTNESS_GRID) return "grid"
+  if (adjustedBrightness >= BRIGHTNESS_GRID_DIAGONAL) return "grid-diagonal"
   return "grid-cross"
-}
-
-const applyThreshold = (brightness: number, threshold: number): number => {
-  const adjustment = (threshold - 128) / 2
-  return Math.max(0, Math.min(255, brightness + adjustment))
 }
 
 const generateCellPolylines = (params: { pattern: LinePattern; row: number; col: number; cellSize: number }): Polyline[] => {

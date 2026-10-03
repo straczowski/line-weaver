@@ -104,6 +104,18 @@ describe("detectEdges", () => {
     assert.strictEqual(result.edges.length, 300)
   })
 
+  it("should handle non-square image dimensions correctly", () => {
+    const width = 10
+    const height = 20
+    const input = createUniformImage(128, width, height)
+
+    const result = detectEdges({ grayscaleData: input })
+
+    assert.strictEqual(result.width, width)
+    assert.strictEqual(result.height, height)
+    assert.strictEqual(result.edges.length, width * height)
+  })
+
   it("should only produce 0 or 255 values in edges", () => {
     const input = createVerticalEdge()
 

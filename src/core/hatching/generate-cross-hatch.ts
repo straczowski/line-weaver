@@ -1,4 +1,8 @@
+import { applyBrightnessThreshold } from "./apply-brightness-threshold.ts"
 import type { BrightnessGrid, Point, Polyline } from "../types.ts"
+
+const CROSS_PATTERN_OFFSET = 85
+const LINE_ANGLE_EPSILON = 1e-10
 
 type GenerateCrossHatchInput = {
   brightnessGrid: BrightnessGrid
@@ -31,17 +35,11 @@ export const generateCrossHatch = (params: GenerateCrossHatchInput): Polyline[] 
 type CrossPattern = "empty" | "diagonal" | "cross"
 
 const determineCrossPattern = (brightness: number, threshold: number): CrossPattern => {
-  const offset = 85
-  const adjustedBrightness = applyThreshold(brightness, threshold)
+  const adjustedBrightness = applyBrightnessThreshold(brightness, threshold)
 
-  if (adjustedBrightness >= threshold + offset) return "empty"
-  if (adjustedBrightness >= threshold - offset) return "diagonal"
+  if (adjustedBrightness >= threshold + CROSS_PATTERN_OFFSET) return "empty"
+  if (adjustedBrightness >= threshold - CROSS_PATTERN_OFFSET) return "diagonal"
   return "cross"
-}
-
-const applyThreshold = (brightness: number, threshold: number): number => {
-  const adjustment = (threshold - 128) / 2
-  return Math.max(0, Math.min(255, brightness + adjustment))
 }
 
 type GenerateCrossCellPolylinesInput = {
@@ -86,7 +84,7 @@ const clipLineThroughCenterToCell = (
 
   const ts: number[] = []
 
-  if (Math.abs(cos) > 1e-10) {
+  if (Math.abs(cos) > LINE_ANGLE_EPSILON) {
     const tLeft = (cellX - centerX) / cos
     const yLeft = centerY + tLeft * sin
     if (cellY <= yLeft && yLeft <= cellY + cellSize) ts.push(tLeft)
@@ -95,7 +93,7 @@ const clipLineThroughCenterToCell = (
     if (cellY <= yRight && yRight <= cellY + cellSize) ts.push(tRight)
   }
 
-  if (Math.abs(sin) > 1e-10) {
+  if (Math.abs(sin) > LINE_ANGLE_EPSILON) {
     const tBottom = (cellY - centerY) / sin
     const xBottom = centerX + tBottom * cos
     if (cellX <= xBottom && xBottom <= cellX + cellSize) ts.push(tBottom)

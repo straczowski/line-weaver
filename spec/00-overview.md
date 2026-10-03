@@ -13,7 +13,7 @@ This is the **master plan**. Detailed implementation specs are added incremental
 | 00    | `00-overview.md`                 | ✅ Complete |
 | 01    | `01-project-setup.md`            | ✅ Complete |
 | 02    | `02-image-input.md`              | ✅ Complete |
-| 02.01 | `02.01-acr-state-management.md`  | 🔲 Pending  |
+| 02.01 | `02.01-acr-state-management.md`  | ✅ Complete |
 | 03    | `03-simple-vectorization.md`     | ✅ Complete |
 | 04    | `04-svg-generation.md`           | ✅ Complete |
 | 04.01 | `04.01-display-svg.md`           | ✅ Complete |
@@ -23,7 +23,7 @@ This is the **master plan**. Detailed implementation specs are added incremental
 | 06    | `06-advanced-processing.md`      | ✅ Complete |
 | 06.01 | `06.01-filter-small-polylines.md`| ✅ Complete |
 | 07    | `07-new-structure-of-core.md`     | ✅ Complete |
-| 08    | `08-extend-hatch-option.md`       | 🔲 Pending  |
+| 08    | `08-extend-hatch-option.md`       | ✅ Complete |
 
 > 💡 Each spec is created just-in-time before implementation begins for that phase.
 
@@ -60,21 +60,23 @@ Build a performant, interactive web application that:
 ┌─────────────────────────────────────────────────────────────────────┐
 │                        React UI Layer                               │
 ├─────────────┬───────────────────┬─────────────────┬─────────────────┤
-│ ImageUpload │   PreviewCanvas   │  ControlPanel   │ GcodeSettings   │
-│  Component  │    Component      │   Component     │    Panel        │
+│ ImageUpload │ PreviewPanel      │  ControlPanel   │ GcodeSettings   │
+│  Original   │ VectorizedImage   │  ModeSelector   │                 │
 └─────────────┴─────────┬─────────┴─────────────────┴─────────────────┘
                         │
 ┌───────────────────────▼───────────────────────────────────────────┐
-│                   Processing Pipeline                              │
+│                   Processing Pipeline (core/)                     │
 ├─────────────┬─────────────┬─────────────┬─────────────────────────┤
-│ ImageLoader │ EdgeDetect  │ Hatching    │ StrokeOptimizer         │
+│ loadImage  │ detectEdges │ Hatching    │ optimizeLineOrder        │
+│ scaleImage │ traceContours│ (cross/grid │ mergeConnectedPolylines │
+│ vectorize  │ sampleBright │  sketch)    │ filterSmallPolylines     │
 └─────────────┴─────────────┴─────────────┴─────────────────────────┘
                         │
         ┌───────────────┼───────────────┐
         ▼                               ▼
 ┌───────────────────────┐       ┌───────────────────────────────────┐
-│    SVG Generator      │       │      GCODE Generator              │
-│  (Polyline → SVG)     │       │  (Scale → Optimize → Commands)   │
+│    generateSvg        │       │      generateGcode                │
+│  (Polyline → SVG)     │       │  (Scale → Flip → Merge → Optimize)│
 └───────────────────────┘       └───────────────────────────────────┘
 ```
 
@@ -100,14 +102,15 @@ Build a performant, interactive web application that:
 2. **Trace contours** by following connected edge pixels
 3. **Simplify polylines** using Ramer-Douglas-Peucker algorithm
 
-### Phase 3: Hatching (Cross-hatch shading)
+### Phase 3: Hatching
 
-1. **Divide image into grid patches** (configurable size: 8, 16, 32px)
-2. **Calculate average darkness** per patch
-3. **Generate hatch lines** based on darkness level:
-   - Light areas: no lines or sparse lines
-   - Dark areas: dense cross-hatching
-4. **Add Perlin noise** for organic, sketchy feel
+1. **Divide image into grid patches** (configurable size via gridSize)
+2. **Calculate average brightness** per patch (`sampleBrightness`)
+3. **Generate hatch lines** based on selected mode:
+   - **Sketch**: variable-density hatching with angle and density controls
+   - **Cross**: 3-threshold pattern (empty → diagonal → cross) with angle
+   - **Grid**: 5-level patterns (empty → horizontal → grid → grid-diagonal → grid-cross)
+4. **Add Perlin noise** for organic, sketchy feel (optional)
 
 ### Phase 4: Stroke Optimization
 
@@ -130,45 +133,58 @@ Build a performant, interactive web application that:
 line-weaver/
 ├── spec/                         # 📋 Specifications (this folder)
 │   ├── 00-overview.md            # Master plan (you are here)
-│   ├── 01-project-setup.md       # Setup details
+│   ├── 01-project-setup.md      # Setup details
 │   └── ...                       # Additional specs as needed
 ├── public/
 │   └── favicon.svg
 ├── src/
+│   ├── App.tsx
 │   ├── components/
-│   │   ├── App.tsx
+│   │   ├── ControlPanel/
+│   │   │   ├── ControlPanel.tsx
+│   │   │   ├── ModeSelector.tsx
+│   │   │   ├── SliderControl.tsx
+│   │   │   ├── ToggleControl.tsx
+│   │   │   └── Tooltip.tsx
+│   │   ├── Export/
+│   │   │   ├── ExportButtonGCode.tsx
+│   │   │   ├── ExportButtonSVG.tsx
+│   │   │   └── utils.ts
+│   │   ├── GcodeSettings/
+│   │   │   └── GcodeSettings.tsx
+│   │   ├── Header/
+│   │   │   └── Header.tsx
 │   │   ├── ImageUploader/
 │   │   │   └── ImageUploader.tsx
-│   │   ├── PreviewCanvas/
-│   │   │   └── PreviewCanvas.tsx
-│   │   ├── ControlPanel/
-│   │   │   └── ControlPanel.tsx
-│   │   ├── ExportButton/
-│   │   │   └── ExportButton.tsx
-│   │   ├── GcodeSettingsPanel/
-│   │   │   └── GcodeSettingsPanel.tsx
-│   │   └── ExportGcodeButton/
-│   │       └── ExportGcodeButton.tsx
+│   │   ├── LoadingIndicator/
+│   │   │   └── LoadingIndicator.tsx
+│   │   └── Preview/
+│   │       ├── OriginalImage.tsx
+│   │       ├── PreviewPanel.tsx
+│   │       └── VectorizedImage.tsx
 │   ├── core/
-│   │   ├── types.ts              # Shared type definitions
-│   │   ├── imageLoader.ts        # Load image → Canvas → ImageData
-│   │   ├── grayscale.ts          # RGB → Grayscale conversion
-│   │   ├── edgeDetection.ts      # Canny edge detection
-│   │   ├── contourTracing.ts     # Edge → Polyline conversion
-│   │   ├── lineSimplify.ts       # Douglas-Peucker algorithm
-│   │   ├── hatching.ts           # Cross-hatch generation
-│   │   ├── perlin.ts             # Perlin noise for sketchy effect
-│   │   ├── strokeOptimizer.ts    # Stroke sorting/optimization
-│   │   ├── svgGenerator.ts       # Polylines → SVG output
-│   │   ├── generate-gcode.ts     # Entry point for GCODE generation
-│   │   ├── scale-polylines.ts    # Scale polylines to fit sheet
-│   │   ├── optimize-line-order.ts # Minimize pen lift operations
-│   │   └── convert-to-gcode-commands.ts # Generate GCODE string
+│   │   ├── types.ts
+│   │   ├── vectorize-image.ts
+│   │   ├── vectorize-image.test.ts
+│   │   ├── detection/            # Edge detection & contour tracing
+│   │   ├── gcode/                # GCODE generation
+│   │   ├── hatching/             # Pattern generation (line, cross, advanced, perlin)
+│   │   ├── image/                # Load, validate, scale, grayscale, blur
+│   │   ├── polyline/             # Simplify, combine, filter, noise
+│   │   └── svg/                  # Polylines → SVG
 │   ├── hooks/
-│   │   ├── useImageProcessor.ts  # Main processing hook
-│   │   └── useDebounce.ts        # Debounce for slider controls
-│   ├── utils/
-│   │   └── downloadSvg.ts        # Trigger SVG file download
+│   │   ├── use-debounce.ts
+│   │   ├── use-debounced-settings.ts
+│   │   ├── use-drop-zone.ts
+│   │   ├── use-file-upload.ts
+│   │   └── use-vectorize.ts
+│   ├── store/
+│   │   ├── store.ts
+│   │   ├── types.ts
+│   │   ├── default-settings.ts
+│   │   ├── selectors.ts
+│   │   ├── actions-hooks.ts
+│   │   └── create-selectors.ts
 │   ├── main.tsx
 │   └── index.css
 ├── index.html
@@ -194,11 +210,10 @@ line-weaver/
 - Validates file type (PNG/JPG only)
 - Displays thumbnail preview of original image
 
-### `<PreviewCanvas />`
+### `<PreviewPanel />` + `<OriginalImage />` + `<VectorizedImage />`
 
-- Dual-pane view: original image vs. vectorized result
-- Canvas for rendering SVG preview in real-time
-- Zoom and pan controls
+- Dual-pane view: `<PreviewPanel title="Original">` with `<OriginalImage />`, and `<PreviewPanel title="Vectorized">` with `<VectorizedImage />`
+- Original image and SVG preview scale to fit container; loading and error states shown
 
 ### `<ControlPanel />`
 
@@ -210,19 +225,19 @@ line-weaver/
   - **Noise Amount** (sketchy effect intensity)
   - **Stroke Width**
 
-### `<ExportButton />`
+### `<ExportButtonSVG />`
 
-- Generates final SVG file
+- Generates final SVG file from store polylines
 - Triggers browser download
 
-### `<GcodeSettingsPanel />`
+### `<GcodeSettings />`
 
 - Expandable panel for GCODE configuration
 - Command settings: Pen Up, Pen Down, Feed Rate, Pause
 - Sheet settings: Target X/Y dimensions, Padding
-- Persists settings in app state
+- Persists settings in app state (Zustand store)
 
-### `<ExportGcodeButton />`
+### `<ExportButtonGCode />`
 
 - Generates optimized GCODE from polylines
 - Scales content to fit sheet with padding
@@ -394,7 +409,7 @@ line-weaver/
 
 ## ✅ Success Criteria
 
-1. User can upload PNG/JPG images up to 5MB
+1. User can upload PNG/JPG images up to 20MB
 2. Processing completes in < 5 seconds for typical images (1920x1080)
 3. Output SVG is valid and renders in all major browsers
 4. UI is responsive and provides feedback during processing
@@ -406,4 +421,4 @@ line-weaver/
 
 ---
 
-_Last Updated: December 13, 2025_
+_Last Updated: February 1, 2026. File structure and components synced with current codebase._

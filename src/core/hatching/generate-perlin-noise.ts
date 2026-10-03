@@ -1,5 +1,3 @@
-const PERMUTATION_TABLE = createPermutationTable()
-
 type GeneratePerlinNoiseInput = {
   x: number
   y: number
@@ -66,19 +64,7 @@ const computeNoise = (x: number, y: number): number => {
   return lerp(lerpX1, lerpX2, v)
 }
 
-const fade = (t: number): number => t * t * t * (t * (t * 6 - 15) + 10)
-
-const lerp = (a: number, b: number, t: number): number => a + t * (b - a)
-
-const computeGradient = (hash: number, x: number, y: number): number => {
-  const h = hash & 3
-  if (h === 0) return x + y
-  if (h === 1) return -x + y
-  if (h === 2) return x - y
-  return -x - y
-}
-
-function createPermutationTable(): number[] {
+const createPermutationTable = (): number[] => {
   const p = [
     151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140,
     36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120,
@@ -106,3 +92,16 @@ function createPermutationTable(): number[] {
   return table
 }
 
+const PERMUTATION_TABLE = createPermutationTable()
+
+const fade = (t: number): number => t * t * t * (t * (t * 6 - 15) + 10)
+
+const lerp = (a: number, b: number, t: number): number => a + t * (b - a)
+
+const computeGradient = (hash: number, x: number, y: number): number => {
+  const h = hash & 3
+  if (h === 0) return x + y
+  if (h === 1) return -x + y
+  if (h === 2) return x - y
+  return -x - y
+}
