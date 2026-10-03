@@ -57,16 +57,11 @@ const PenPlotterSection = () => {
       <h2 className="font-mono text-2xl font-bold text-accent">Pen Plotter Setup</h2>
       <div className="space-y-4 text-text">
         <p>
-        I am using an open-source CNC system based on a Raspberry Pi and an Arduino, controlled by {" "}
-          <a
-            href="https://github.com/grbl/grbl"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-accent underline transition-colors hover:text-accent/80"
-          >
-            grbl
-          </a>{" "}
-          firmware.
+          Hardware, firmware, and GRBL configuration for this CoreXY plotter live on the{" "}
+          <Link to="/setup" className="text-accent underline transition-colors hover:text-accent/80">
+            Setup
+          </Link>{" "}
+          page.
         </p>
         <p>
           If you want to override the G-Code commands in Line Weaver you can expand the G-Code Settings section.
